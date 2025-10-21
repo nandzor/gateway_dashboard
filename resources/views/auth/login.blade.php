@@ -23,7 +23,7 @@
         </div>
         <div class="flex items-center justify-between">
           <div class="text-sm text-blue-800">
-            <p class="font-mono bg-blue-100 px-2 py-1 rounded">admin@cctv.com</p>
+            <p class="font-mono bg-blue-100 px-2 py-1 rounded">admin@admin.com</p>
             <p class="font-mono bg-blue-100 px-2 py-1 rounded mt-1">admin123</p>
           </div>
           <x-button type="button" variant="primary" size="sm" onclick="fillDemoCredentials()" class="shadow-md">
@@ -83,7 +83,7 @@
 
   <script>
     function fillDemoCredentials() {
-      document.getElementById('email').value = 'admin@cctv.com';
+      document.getElementById('email').value = 'admin@admin.com';
       document.getElementById('password').value = 'admin123';
 
       // Show success notification using global function

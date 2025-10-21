@@ -22,6 +22,17 @@
         </div>
 
         <div class="flex items-center space-x-4">
+          <!-- Show Inactive Toggle -->
+          <form method="GET" action="{{ route('users.index') }}" class="flex items-center">
+            <input type="hidden" name="search" value="{{ $search ?? '' }}">
+            <input type="hidden" name="per_page" value="{{ $perPage ?? 10 }}">
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="checkbox" name="show_inactive" value="1" {{ $showInactive ? 'checked' : '' }}
+                onchange="this.form.submit()" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+              <span class="text-sm text-gray-700">Show Inactive</span>
+            </label>
+          </form>
+
           <!-- Per Page Selector -->
           <div class="flex items-center space-x-2">
             <x-per-page-selector :options="$perPageOptions ?? [10, 25, 50, 100]" :current="$perPage ?? 10" :url="route('users.index')" type="server" />
@@ -39,9 +50,12 @@
     </div>
 
     <!-- Table -->
-    <x-table :headers="['Name', 'Email', 'Role', 'Created', 'Actions']">
+    <x-table :headers="['Username', 'Name', 'Email', 'Role', 'Status', 'Created', 'Actions']">
       @forelse($users as $user)
-        <tr class="hover:bg-blue-50 transition-colors">
+        <tr class="hover:bg-blue-50 transition-colors {{ $user->is_active == 0 ? 'opacity-60 bg-gray-50' : '' }}">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm font-medium text-gray-900">{{ $user->username }}</div>
+          </td>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
@@ -61,6 +75,11 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <x-badge :variant="$user->isAdmin() ? 'purple' : 'primary'">
               {{ ucfirst($user->role) }}
+            </x-badge>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <x-badge :variant="$user->is_active == 1 ? 'success' : 'danger'">
+              {{ $user->is_active == 1 ? 'Active' : 'Inactive' }}
             </x-badge>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -94,7 +113,7 @@
         </tr>
       @empty
         <tr>
-          <td colspan="5" class="px-6 py-12 text-center">
+          <td colspan="7" class="px-6 py-12 text-center">
             <div class="flex flex-col items-center justify-center">
               <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -134,8 +153,8 @@
   </x-card>
 
   <!-- Delete Confirmation Modal -->
-  <x-confirm-modal id="confirm-delete" title="Confirm Delete"
-    message="This action cannot be undone. The user will be permanently deleted." confirmText="Delete User"
+  <x-confirm-modal id="confirm-delete" title="Confirm Deactivate"
+    message="Are you sure you want to deactivate this user? The user's is_active status will be set to 0." confirmText="Deactivate User"
     cancelText="Cancel" icon="warning" confirmAction="handleDeleteConfirm(data)" />
 @endsection
 

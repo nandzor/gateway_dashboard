@@ -14,7 +14,14 @@
           </div>
           <div class="ml-6 flex-1">
             <h2 class="text-2xl font-bold text-white mb-1">{{ $user->name }}</h2>
-            <p class="text-blue-100 flex items-center">
+            <p class="text-blue-100 flex items-center text-sm mb-1">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              @{{ $user->username }}
+            </p>
+            <p class="text-blue-100 flex items-center text-sm">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -22,15 +29,36 @@
               {{ $user->email }}
             </p>
           </div>
-          <x-badge :variant="$user->isAdmin() ? 'purple' : 'primary'" size="lg">
-            {{ ucfirst($user->role) }}
-          </x-badge>
+          <div class="flex flex-col space-y-2">
+            <x-badge :variant="$user->isAdmin() ? 'purple' : 'primary'" size="lg">
+              {{ ucfirst($user->role) }}
+            </x-badge>
+            <x-badge :variant="$user->is_active == 1 ? 'success' : 'danger'" size="lg">
+              {{ $user->is_active == 1 ? 'Active' : 'Inactive' }}
+            </x-badge>
+          </div>
         </div>
       </div>
 
       <!-- Details Section -->
       <div class="p-6 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Username -->
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="p-2 bg-indigo-100 rounded-lg mr-3">
+                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-0.5">Username</label>
+                <p class="text-sm font-semibold text-gray-900">{{ $user->username }}</p>
+              </div>
+            </div>
+          </div>
+
           <!-- User ID -->
           <div class="p-4 bg-gray-50 rounded-lg">
             <div class="flex items-center">
@@ -47,11 +75,29 @@
             </div>
           </div>
 
+          <!-- Status -->
+          <div class="p-4 bg-gray-50 rounded-lg">
+            <div class="flex items-center">
+              <div class="p-2 {{ $user->is_active == 1 ? 'bg-green-100' : 'bg-red-100' }} rounded-lg mr-3">
+                <svg class="w-5 h-5 {{ $user->is_active == 1 ? 'text-green-600' : 'text-red-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-0.5">Account Status</label>
+                <x-badge :variant="$user->is_active == 1 ? 'success' : 'danger'" size="sm">
+                  {{ $user->is_active == 1 ? 'Active' : 'Inactive' }}
+                </x-badge>
+              </div>
+            </div>
+          </div>
+
           <!-- Member Since -->
           <div class="p-4 bg-gray-50 rounded-lg">
             <div class="flex items-center">
-              <div class="p-2 bg-green-100 rounded-lg mr-3">
-                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
@@ -111,7 +157,7 @@
             </svg>
             Account Information
           </h4>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-4 gap-4">
             <div class="text-center">
               <p class="text-2xl font-bold text-blue-600">{{ $user->id }}</p>
               <p class="text-xs text-gray-600 mt-1">User ID</p>
@@ -132,8 +178,14 @@
               <p class="text-xs text-gray-600 mt-1">Joined</p>
             </div>
             <div class="text-center">
-              <p class="text-2xl font-bold text-purple-600">{{ $user->isAdmin() ? 'Admin' : 'User' }}</p>
+              <p class="text-2xl font-bold text-purple-600">{{ ucfirst($user->role) }}</p>
               <p class="text-xs text-gray-600 mt-1">Account Type</p>
+            </div>
+            <div class="text-center">
+              <p class="text-2xl font-bold {{ $user->is_active == 1 ? 'text-green-600' : 'text-red-600' }}">
+                {{ $user->is_active == 1 ? 'Active' : 'Inactive' }}
+              </p>
+              <p class="text-xs text-gray-600 mt-1">Status</p>
             </div>
           </div>
         </div>
@@ -178,8 +230,8 @@
       @method('DELETE')
     </form>
 
-    <x-confirm-modal id="confirm-delete" title="Confirm Delete"
-      message="This action cannot be undone. The user will be permanently deleted." confirmText="Delete User"
+    <x-confirm-modal id="confirm-delete" title="Confirm Deactivate"
+      message="Are you sure you want to deactivate this user? The user's is_active status will be set to 0." confirmText="Deactivate User"
       cancelText="Cancel" icon="warning" confirmAction="handleDeleteConfirm(data)" />
   @endif
 

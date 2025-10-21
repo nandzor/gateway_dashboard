@@ -19,10 +19,14 @@
         @csrf
         @method('PUT')
 
-        <x-input name="name" label="Full Name" :value="$user->name" placeholder="Enter full name" required />
+        <x-input name="username" label="Username" :value="$user->username" placeholder="Enter username" required
+          hint="Unique username for login (max 150 characters)" />
+
+        <x-input name="name" label="Full Name" :value="$user->name" placeholder="Enter full name" required
+          hint="Maximum 100 characters" />
 
         <x-input type="email" name="email" label="Email Address" :value="$user->email" placeholder="user@example.com"
-          required hint="This email will be used for login (no spaces allowed)"
+          required hint="This email will be used for login (max 50 characters, no spaces allowed)"
           onkeypress="return event.charCode != 32" />
 
         <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -45,8 +49,11 @@
         <x-input type="password" name="password_confirmation" label="Confirm New Password"
           placeholder="Re-enter new password" />
 
-        <x-select name="role" label="User Role" :options="['user' => 'Regular User', 'admin' => 'Administrator']" :selected="$user->role" required
+        <x-select name="role" label="User Role" :options="['user' => 'Regular User', 'admin' => 'Administrator', 'operator' => 'Operator', 'viewer' => 'Viewer']" :selected="$user->role" required
           hint="Choose the appropriate role for this user" />
+
+        <x-select name="is_active" label="Status" :options="[1 => 'Active', 0 => 'Inactive']" :selected="$user->is_active" required
+          hint="Set user active status (0 = Inactive, 1 = Active)" />
 
         <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
           <x-button variant="secondary" :href="route('users.index')">

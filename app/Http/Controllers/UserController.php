@@ -20,13 +20,19 @@ class UserController extends Controller {
     public function index(Request $request) {
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
+        $showInactive = $request->get('show_inactive', false);
 
-        // Using new unified getPaginate method from BaseService
-        $users = $this->userService->getPaginate($search, $perPage);
+        // Show all users including inactive if requested
+        if ($showInactive) {
+            $users = $this->userService->getAllWithInactive($search, $perPage);
+        } else {
+            // Using new unified getPaginate method from BaseService - only active users
+            $users = $this->userService->getPaginate($search, $perPage);
+        }
 
         $perPageOptions = $this->userService->getPerPageOptions();
 
-        return view('users.index', compact('users', 'perPageOptions', 'search', 'perPage'));
+        return view('users.index', compact('users', 'perPageOptions', 'search', 'perPage', 'showInactive'));
     }
 
     /**
@@ -41,10 +47,12 @@ class UserController extends Controller {
      */
     public function store(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'username' => 'required|string|max:150|unique:users',
+            'name' => 'required|string|max:100',
+            'email' => 'required|string|email|max:50|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,operator,viewer,user',
+            'is_active' => 'nullable|in:0,1',
         ]);
 
         if ($validator->fails()) {
@@ -63,7 +71,8 @@ class UserController extends Controller {
      * Display the specified user
      */
     public function show($id) {
-        $user = $this->userService->findById($id);
+        // Find user including inactive ones
+        $user = $this->userService->findByIdWithInactive($id);
 
         if (!$user) {
             return redirect()->route('users.index')
@@ -82,7 +91,8 @@ class UserController extends Controller {
      * Show the form for editing the specified user
      */
     public function edit($id) {
-        $user = $this->userService->findById($id);
+        // Find user including inactive ones
+        $user = $this->userService->findByIdWithInactive($id);
 
         if (!$user) {
             return redirect()->route('users.index')
@@ -96,7 +106,8 @@ class UserController extends Controller {
      * Update the specified user
      */
     public function update(Request $request, $id) {
-        $user = $this->userService->findById($id);
+        // Find user including inactive ones
+        $user = $this->userService->findByIdWithInactive($id);
 
         if (!$user) {
             return redirect()->route('users.index')
@@ -104,10 +115,12 @@ class UserController extends Controller {
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
+            'username' => 'required|string|max:150|unique:users,username,' . $id,
+            'name' => 'required|string|max:100',
+            'email' => 'required|string|email|max:50|unique:users,email,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,operator,viewer,user',
+            'is_active' => 'nullable|in:0,1',
         ]);
 
         if ($validator->fails()) {
@@ -123,10 +136,11 @@ class UserController extends Controller {
     }
 
     /**
-     * Remove the specified user
+     * Remove the specified user (soft delete - set is_active to 0)
      */
     public function destroy($id) {
-        $user = $this->userService->findById($id);
+        // Find user including inactive ones
+        $user = $this->userService->findByIdWithInactive($id);
 
         if (!$user) {
             return redirect()->route('users.index')
@@ -141,6 +155,6 @@ class UserController extends Controller {
         $this->userService->deleteUser($user);
 
         return redirect()->route('users.index')
-            ->with('success', 'User deleted successfully.');
+            ->with('success', 'User deactivated successfully.');
     }
 }

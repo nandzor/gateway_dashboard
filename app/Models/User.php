@@ -16,10 +16,12 @@ class User extends Authenticatable {
      * @var array<int, string>
      */
     protected $fillable = [
+        'username',
         'name',
         'email',
         'password',
         'role',
+        'is_active',
     ];
 
     /**
@@ -41,6 +43,7 @@ class User extends Authenticatable {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'integer',
         ];
     }
 
@@ -105,5 +108,40 @@ class User extends Authenticatable {
      */
     public function scopeViewers($query) {
         return $query->where('role', 'viewer');
+    }
+
+    /**
+     * Scope: Active users only (is_active = 1)
+     */
+    public function scopeActive($query) {
+        return $query->where('is_active', 1);
+    }
+
+    /**
+     * Scope: Inactive users (is_active = 0)
+     */
+    public function scopeInactive($query) {
+        return $query->where('is_active', 0);
+    }
+
+    /**
+     * Check if user is active
+     */
+    public function isActive(): bool {
+        return $this->is_active === 1;
+    }
+
+    /**
+     * Soft delete user by setting is_active to 0
+     */
+    public function softDelete(): bool {
+        return $this->update(['is_active' => 0]);
+    }
+
+    /**
+     * Restore soft deleted user by setting is_active to 1
+     */
+    public function restore(): bool {
+        return $this->update(['is_active' => 1]);
     }
 }

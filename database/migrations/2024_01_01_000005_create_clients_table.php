@@ -19,6 +19,8 @@ return new class extends Migration
             $table->smallInteger('type')->nullable();
             $table->string('ak', 100)->nullable();
             $table->string('sk', 100)->nullable();
+            $table->string('avkey_iv', 100)->nullable();
+            $table->string('avkey_pass', 100)->nullable();
             $table->integer('service_module')->nullable();
             $table->integer('is_active')->nullable();
             $table->timestamps();
