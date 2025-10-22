@@ -15,61 +15,66 @@
 
         <!-- Basic Information -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <x-input name="client_name" label="Client Name" placeholder="Enter client name" required
-            hint="Maximum 100 characters" />
+          <x-input name="client_name" label="Client Name" placeholder="Enter client name" required />
 
-          <x-select name="type" label="Client Type" :options="$typeOptions" placeholder="Select client type" required
-            hint="Choose the appropriate client type" />
+          <x-select name="type" label="Client Type" :options="$typeOptions" placeholder="Select client type" required />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <x-input name="address" label="Address" placeholder="Enter client address"
-            hint="Maximum 150 characters" />
+          <x-input name="address" label="Address" placeholder="Enter client address" />
 
-          <x-input name="contact" label="Contact" placeholder="Enter contact information"
-            hint="Maximum 20 characters" />
+          <x-input name="contact" label="Contact" placeholder="Enter contact information" />
         </div>
 
         <!-- API Credentials -->
         <div class="border-t pt-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">API Credentials</h3>
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-sm text-blue-800">API credentials will be automatically generated when you create the client.</p>
+            </div>
+          </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <x-input name="ak" label="Access Key (AK)" placeholder="Enter access key" 
-              hint="Maximum 100 characters" />
+            <x-copy-input name="ak"
+                          :value="$previewCredentials['ak']"
+                          label="Access Key (AK)" />
 
-            <x-input name="sk" label="Secret Key (SK)" placeholder="Enter secret key" 
-              hint="Maximum 100 characters" />
+            <x-copy-input name="sk"
+                          :value="$previewCredentials['sk']"
+                          label="Secret Key (SK)" />
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <x-input name="avkey_iv" label="AVKey IV" placeholder="Enter avkey iv" 
-              hint="Maximum 100 characters" />
+            <x-copy-input name="avkey_iv"
+                          :value="$previewCredentials['avkey_iv']"
+                          label="AVKey IV" />
 
-            <x-input name="avkey_pass" label="AVKey Pass" placeholder="Enter avkey pass" 
-              hint="Maximum 100 characters" />
+            <x-copy-input name="avkey_pass"
+                          :value="$previewCredentials['avkey_pass']"
+                          label="AVKey Pass" />
           </div>
         </div>
 
-        <!-- Service Configuration -->
+        <!-- Service Assignment -->
         <div class="border-t pt-6">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Service Configuration</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <x-select name="service_module" label="Service Module" :options="$serviceModuleOptions" placeholder="Select service module"
-              hint="Choose the service module for this client" />
-
-            <x-textarea name="service_allow" label="Service Allow" placeholder="Enter allowed services"
-              hint="List of services this client can access" />
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Service Assignment</h3>
+          <div class="grid grid-cols-1 gap-6">
+            <x-multi-select name="service_assignments"
+                           label="Assign Services"
+                           :options="$serviceModuleOptions"
+                           placeholder="Select services to assign" />
           </div>
         </div>
 
         <!-- Security Settings -->
         <div class="border-t pt-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">Security Settings</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <x-textarea name="white_list" label="White List" placeholder="Enter whitelist IPs"
-              hint="List of allowed IP addresses" />
-
-            <x-textarea name="module_40" label="Module 40" placeholder="Enter module 40 configuration"
-              hint="Module 40 specific configuration" />
+          <div class="grid grid-cols-1 gap-6">
+            <x-ip-tags-input name="white_list"
+                           label="Whitelist IPs"
+                           placeholder="Enter IP address and press Enter" />
           </div>
         </div>
 
@@ -77,11 +82,9 @@
         <div class="border-t pt-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">Status Settings</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <x-select name="is_active" label="Status" :options="[1 => 'Active', 0 => 'Inactive']" :selected="1" placeholder="Select status" required
-              hint="Set client active status" />
+            <x-select name="is_active" label="Status" :options="[1 => 'Active', 0 => 'Inactive']" :selected="1" placeholder="Select status" required />
 
-            <x-select name="is_staging" label="Environment" :options="[0 => 'Production', 1 => 'Staging']" :selected="0" placeholder="Select environment" required
-              hint="Set client environment" />
+            <x-select name="is_staging" label="Environment" :options="[0 => 'Production', 1 => 'Staging']" :selected="0" placeholder="Select environment" required />
           </div>
         </div>
 
@@ -99,4 +102,6 @@
       </form>
     </x-card>
   </div>
+
+  <x-copy-script />
 @endsection

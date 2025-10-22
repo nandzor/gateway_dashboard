@@ -62,11 +62,19 @@ class Client extends Model
     // }
 
     /**
+     * Get assigned services through service_assigns table
+     */
+    public function serviceAssigns()
+    {
+        return $this->hasMany(ServiceAssign::class);
+    }
+
+    /**
      * Get assigned services
      */
     public function services()
     {
-        return $this->belongsToMany(\App\Models\Service::class, 'service_assign');
+        return $this->belongsToMany(Service::class, 'service_assigns');
     }
 
     /**
@@ -148,13 +156,48 @@ class Client extends Model
     public function getTypeNameAttribute(): string
     {
         $types = [
-            1 => 'Individual',
-            2 => 'Corporate',
-            3 => 'Government',
-            4 => 'NGO',
+            1 => 'Prepaid',
+            2 => 'Postpaid',
         ];
 
         return $types[$this->type] ?? 'Unknown';
+    }
+
+    /**
+     * Get client type badge variant
+     */
+    public function getTypeBadgeVariantAttribute(): string
+    {
+        $variants = [
+            1 => 'purple',    // Prepaid - Cyan (menggunakan info yang sudah ada)
+            2 => 'indigo', // Postpaid - Green (menggunakan success yang sudah ada)
+        ];
+
+        return $variants[$this->type] ?? 'secondary';
+    }
+
+    /**
+     * Check if client is prepaid
+     */
+    public function isPrepaid(): bool
+    {
+        return $this->type === 1;
+    }
+
+    /**
+     * Check if client is postpaid
+     */
+    public function isPostpaid(): bool
+    {
+        return $this->type === 2;
+    }
+
+    /**
+     * Get service assignments as array of service IDs
+     */
+    public function getServiceAssignmentsAttribute(): array
+    {
+        return $this->serviceAssigns()->pluck('service_id')->toArray();
     }
 
     /**

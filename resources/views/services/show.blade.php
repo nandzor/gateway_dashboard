@@ -85,11 +85,11 @@
           </div>
           <div>
             <label class="text-sm font-medium text-gray-500">Created Date</label>
-            <p class="text-sm text-gray-900 mt-1">{{ $service->created_at->format('M d, Y H:i') }}</p>
+            <p class="text-sm text-gray-900 mt-1">{{ $service->created_at ? $service->created_at->format('M d, Y H:i') : 'N/A' }}</p>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-500">Last Updated</label>
-            <p class="text-sm text-gray-900 mt-1">{{ $service->updated_at->format('M d, Y H:i') }}</p>
+            <p class="text-sm text-gray-900 mt-1">{{ $service->updated_at ? $service->updated_at->format('M d, Y H:i') : 'N/A' }}</p>
           </div>
         </div>
       </x-card>

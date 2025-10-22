@@ -9,20 +9,22 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class MonthlyReportsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
+class AnalyticsExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     protected $data;
-    protected $month;
+    protected $dateFrom;
+    protected $dateTo;
 
-    public function __construct($data, $month)
+    public function __construct($data, $dateFrom, $dateTo)
     {
         $this->data = $data;
-        $this->month = $month;
+        $this->dateFrom = $dateFrom;
+        $this->dateTo = $dateTo;
     }
 
     public function collection()
     {
-        // Convert the monthly report data to a collection for export
+        // Convert the analytics data to a collection for export
         $collection = collect();
 
         // Add summary data
@@ -61,34 +63,13 @@ class MonthlyReportsExport implements FromCollection, WithHeadings, WithMapping,
             'details' => ''
         ]);
 
-        $collection->push((object) [
-            'type' => 'Summary',
-            'metric' => 'Avg Transactions/Day',
-            'value' => $this->data['summary']['Avg Transactions/Day'],
-            'details' => ''
-        ]);
-
-        $collection->push((object) [
-            'type' => 'Summary',
-            'metric' => 'Avg Revenue/Day',
-            'value' => $this->data['summary']['Avg Revenue/Day'],
-            'details' => ''
-        ]);
-
-        $collection->push((object) [
-            'type' => 'Summary',
-            'metric' => 'Avg Duration/Day',
-            'value' => $this->data['summary']['Avg Duration/Day'],
-            'details' => ''
-        ]);
-
         // Add transaction types
         foreach ($this->data['transaction_types'] as $type => $details) {
             $collection->push((object) [
                 'type' => 'Transaction Type',
                 'metric' => $type,
                 'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
+                'details' => "Revenue: {$details['revenue']}, Percentage: {$details['percentage']}%"
             ]);
         }
 
@@ -98,7 +79,7 @@ class MonthlyReportsExport implements FromCollection, WithHeadings, WithMapping,
                 'type' => 'Client Type',
                 'metric' => $type,
                 'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
+                'details' => "Revenue: {$details['revenue']}, Percentage: {$details['percentage']}%"
             ]);
         }
 
@@ -119,46 +100,6 @@ class MonthlyReportsExport implements FromCollection, WithHeadings, WithMapping,
                 'metric' => $service['service_name'],
                 'value' => $service['usage_count'],
                 'details' => "Revenue: {$service['total_revenue']}, Duration: {$service['total_duration']}"
-            ]);
-        }
-
-        // Add daily trends
-        foreach ($this->data['daily_trends'] as $date => $details) {
-            $collection->push((object) [
-                'type' => 'Daily Trend',
-                'metric' => $date,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
-            ]);
-        }
-
-        // Add weekly trends
-        foreach ($this->data['weekly_trends'] as $week => $details) {
-            $collection->push((object) [
-                'type' => 'Weekly Trend',
-                'metric' => $week,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
-            ]);
-        }
-
-        // Add status breakdown
-        foreach ($this->data['status_breakdown'] as $status => $details) {
-            $collection->push((object) [
-                'type' => 'Status',
-                'metric' => $status,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}"
-            ]);
-        }
-
-        // Add charge breakdown
-        foreach ($this->data['charge_breakdown'] as $charge => $details) {
-            $collection->push((object) [
-                'type' => 'Charge Type',
-                'metric' => $charge,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}"
             ]);
         }
 
@@ -201,6 +142,6 @@ class MonthlyReportsExport implements FromCollection, WithHeadings, WithMapping,
 
     public function title(): string
     {
-        return 'Monthly Report ' . $this->month;
+        return 'Analytics Report ' . $this->dateFrom . ' to ' . $this->dateTo;
     }
 }

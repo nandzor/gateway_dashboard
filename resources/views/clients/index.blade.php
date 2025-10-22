@@ -146,7 +146,7 @@
             </div>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <x-badge :variant="$client->type == 1 ? 'blue' : ($client->type == 2 ? 'green' : ($client->type == 3 ? 'purple' : 'orange'))">
+            <x-badge :variant="$client->type_badge_variant">
               {{ $client->type_name }}
             </x-badge>
           </td>
@@ -167,9 +167,9 @@
               {{ $client->is_staging == 1 ? 'Staging' : 'Production' }}
             </x-badge>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-            {{ $client->created_at->format('M d, Y') }}
-          </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ $client->created_at ? $client->created_at->format('M d, Y') : 'N/A' }}
+            </td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
             <x-action-dropdown>
               <x-dropdown-link :href="route('clients.show', $client)">

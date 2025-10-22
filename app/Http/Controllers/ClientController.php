@@ -67,8 +67,16 @@ class ClientController extends Controller
     {
         $typeOptions = $this->clientService->getTypeOptions();
         $serviceModuleOptions = $this->clientService->getServiceModuleOptions();
+        
+        // Generate preview credentials
+        $previewCredentials = [
+            'ak' => $this->clientService->generateAccessKey(),
+            'sk' => $this->clientService->generateSecretKey(),
+            'avkey_iv' => $this->clientService->generateAvkeyIv(),
+            'avkey_pass' => $this->clientService->generateAvkeyPass(),
+        ];
 
-        return view('clients.create', compact('typeOptions', 'serviceModuleOptions'));
+        return view('clients.create', compact('typeOptions', 'serviceModuleOptions', 'previewCredentials'));
     }
 
     /**

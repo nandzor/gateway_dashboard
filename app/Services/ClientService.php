@@ -72,9 +72,29 @@ class ClientService extends BaseService
             $data['is_staging'] = 0;
         }
 
+        // Auto-generate API credentials
+        $data['ak'] = $this->generateAccessKey();
+        $data['sk'] = $this->generateSecretKey();
+        $data['avkey_iv'] = $this->generateAvkeyIv();
+        $data['avkey_pass'] = $this->generateAvkeyPass();
+
+        // Extract service assignments before creating client
+        $serviceAssignments = $data['service_assignments'] ?? [];
+        unset($data['service_assignments']);
+
+        // Handle white_list as array
+        if (isset($data['white_list']) && is_array($data['white_list'])) {
+            $data['white_list'] = implode(',', array_filter($data['white_list']));
+        }
+
         $client = $this->create($data);
 
         /** @var Client $client */
+
+        // Create service assignments
+        if (!empty($serviceAssignments)) {
+            $this->createServiceAssignments($client, $serviceAssignments);
+        }
 
         // Auto-create initial balance for the client
         $this->createInitialBalance($client);
@@ -102,9 +122,23 @@ class ClientService extends BaseService
      */
     public function updateClient(Model $client, array $data): bool
     {
+        // Extract service assignments before updating client
+        $serviceAssignments = $data['service_assignments'] ?? null;
+        unset($data['service_assignments']);
+
+        // Handle white_list as array
+        if (isset($data['white_list']) && is_array($data['white_list'])) {
+            $data['white_list'] = implode(',', array_filter($data['white_list']));
+        }
+
         $result = $this->update($client, $data);
 
         if ($result) {
+            // Update service assignments if provided
+            if ($serviceAssignments !== null) {
+                $this->updateServiceAssignments($client, $serviceAssignments);
+            }
+
             // Update Redis cache for client
             $this->updateClientRedisCache($client);
         }
@@ -213,7 +247,7 @@ class ClientService extends BaseService
 
         // Count by type
         $typeStats = [];
-        for ($i = 1; $i <= 4; $i++) {
+        for ($i = 1; $i <= 2; $i++) {
             $typeStats["type_{$i}"] = Client::where('type', $i)->active()->count();
         }
 
@@ -233,24 +267,20 @@ class ClientService extends BaseService
     public function getTypeOptions(): array
     {
         return [
-            1 => 'Individual',
-            2 => 'Corporate',
-            3 => 'Government',
-            4 => 'NGO',
+            1 => 'Prepaid',
+            2 => 'Postpaid',
         ];
     }
 
     /**
-     * Get service module options
+     * Get service module options from services table
      */
     public function getServiceModuleOptions(): array
     {
-        return [
-            1 => 'Basic Service',
-            2 => 'Premium Service',
-            3 => 'Enterprise Service',
-            4 => 'Custom Service',
-        ];
+        return \App\Models\Service::active()
+            ->orderBy('name', 'asc')
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
     /**
@@ -472,5 +502,64 @@ class ClientService extends BaseService
     public function isServiceAssigned(Client $client, int $serviceId): bool
     {
         return $client->services()->where('service_id', $serviceId)->exists();
+    }
+
+    /**
+     * Generate Access Key (AK)
+     */
+    public function generateAccessKey(): string
+    {
+        return 'AK_' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 32));
+    }
+
+    /**
+     * Generate Secret Key (SK)
+     */
+    public function generateSecretKey(): string
+    {
+        return 'SK_' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 32));
+    }
+
+    /**
+     * Generate AVKey IV
+     */
+    public function generateAvkeyIv(): string
+    {
+        return strtoupper(substr(md5(uniqid(rand(), true)), 0, 16));
+    }
+
+    /**
+     * Generate AVKey Pass
+     */
+    public function generateAvkeyPass(): string
+    {
+        return strtoupper(substr(md5(uniqid(rand(), true)), 0, 32));
+    }
+
+    /**
+     * Create service assignments for client
+     */
+    public function createServiceAssignments(Client $client, array $serviceIds): void
+    {
+        foreach ($serviceIds as $serviceId) {
+            \App\Models\ServiceAssign::create([
+                'client_id' => $client->id,
+                'service_id' => $serviceId,
+            ]);
+        }
+    }
+
+    /**
+     * Update service assignments for client
+     */
+    public function updateServiceAssignments(Client $client, array $serviceIds): void
+    {
+        // Delete existing assignments
+        $client->serviceAssigns()->delete();
+
+        // Create new assignments
+        if (!empty($serviceIds)) {
+            $this->createServiceAssignments($client, $serviceIds);
+        }
     }
 }

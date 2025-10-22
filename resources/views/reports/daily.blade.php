@@ -11,7 +11,7 @@
         <p class="mt-2 text-gray-600">Report for {{ \Carbon\Carbon::parse($date)->format('l, F d, Y') }}</p>
       </div>
 
-      @if ($reports->count() > 0)
+      @if ($totalTransactions > 0)
         <div class="mt-4 sm:mt-0">
           <x-dropdown align="right" width="48">
             <x-slot name="trigger">
@@ -32,7 +32,8 @@
 
             <x-dropdown-link :href="route('reports.daily.export', [
                 'date' => $date,
-                'branch_id' => $branchId,
+                'client_id' => $clientId,
+                'service_id' => $serviceId,
                 'format' => 'excel',
             ])" variant="success">
               <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2"
@@ -45,7 +46,8 @@
 
             <x-dropdown-link :href="route('reports.daily.export', [
                 'date' => $date,
-                'branch_id' => $branchId,
+                'client_id' => $clientId,
+                'service_id' => $serviceId,
                 'format' => 'pdf',
             ])" variant="danger">
               <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2"
@@ -65,10 +67,24 @@
       <form method="GET">
         <div class="flex flex-col lg:flex-row lg:items-end gap-4">
           <!-- Filter Fields -->
-          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <x-input type="date" name="date" label="Select Date" :value="$date" />
-            <x-company-branch-select name="branch_id" label="Select Branch" :value="$branchId"
-              placeholder="All Branches" />
+            <x-input type="select" name="client_id" label="Client" :value="$clientId">
+              <option value="">All Clients</option>
+              @foreach ($clients as $client)
+                <option value="{{ $client->id }}" {{ $clientId == $client->id ? 'selected' : '' }}>
+                  {{ $client->client_name }}
+                </option>
+              @endforeach
+            </x-input>
+            <x-input type="select" name="service_id" label="Service" :value="$serviceId">
+              <option value="">All Services</option>
+              @foreach ($services as $service)
+                <option value="{{ $service->id }}" {{ $serviceId == $service->id ? 'selected' : '' }}>
+                  {{ $service->name }}
+                </option>
+              @endforeach
+            </x-input>
           </div>
 
           <!-- Action Button -->
@@ -83,56 +99,247 @@
       </form>
     </x-card>
 
-    <x-card title="Daily Report for {{ \Carbon\Carbon::parse($date)->format('l, F d, Y') }}" :padding="false">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Branch</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Devices</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Detections</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Events</th>
-            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Unique Persons</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Details</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          @forelse($reports as $report)
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                {{ $report->branch->branch_name ?? 'Overall' }}
-              </td>
-              <td class="px-6 py-4 text-sm text-center font-semibold text-blue-600">{{ $report->total_devices }}</td>
-              <td class="px-6 py-4 text-sm text-center font-semibold text-purple-600">
-                {{ number_format($report->total_detections) }}</td>
-              <td class="px-6 py-4 text-sm text-center font-semibold text-orange-600">
-                {{ number_format($report->total_events) }}</td>
-              <td class="px-6 py-4 text-sm text-center font-semibold text-green-600">{{ $report->unique_person_count }}
-              </td>
-              <td class="px-6 py-4 text-right">
-                <x-button size="sm" variant="primary"
-                  @click="showDetails{{ $report->id }} = !showDetails{{ $report->id }}">
-                  <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                  View JSON
-                </x-button>
-              </td>
-            </tr>
-            @if ($report->report_data)
-              <tr x-data="{ showDetails{{ $report->id }}: false }" x-show="showDetails{{ $report->id }}" x-cloak>
-                <td colspan="6" class="px-6 py-4 bg-gray-50">
-                  <pre class="text-xs bg-white p-4 rounded border overflow-x-auto">{{ json_encode($report->report_data, JSON_PRETTY_PRINT) }}</pre>
-                </td>
-              </tr>
-            @endif
-          @empty
-            <tr>
-              <td colspan="6" class="px-6 py-8 text-center text-gray-400">No reports found for this date</td>
-            </tr>
-          @endforelse
-        </tbody>
-      </table>
+    <!-- Key Metrics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+      <x-card class="text-center">
+        <div class="p-6">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-lg">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900">@formatNumber($totalTransactions)</h3>
+          <p class="text-sm text-gray-600">Total Transactions</p>
+        </div>
+      </x-card>
+
+      <x-card class="text-center">
+        <div class="p-6">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-green-100 rounded-lg">
+            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900">@formatCurrency($totalRevenue)</h3>
+          <p class="text-sm text-gray-600">Total Revenue</p>
+        </div>
+      </x-card>
+
+      <x-card class="text-center">
+        <div class="p-6">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-purple-100 rounded-lg">
+            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900">@formatNumber($totalDuration)</h3>
+          <p class="text-sm text-gray-600">Total Duration</p>
+        </div>
+      </x-card>
+
+      <x-card class="text-center">
+        <div class="p-6">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-orange-100 rounded-lg">
+            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900">@formatNumber($uniqueUsers)</h3>
+          <p class="text-sm text-gray-600">Unique Users</p>
+        </div>
+      </x-card>
+
+      <x-card class="text-center">
+        <div class="p-6">
+          <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-indigo-100 rounded-lg">
+            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900">@formatNumber($uniqueClients)</h3>
+          <p class="text-sm text-gray-600">Unique Clients</p>
+        </div>
+      </x-card>
+    </div>
+
+    <!-- Hourly Trends Chart -->
+    <x-card title="Hourly Trends" class="mb-8">
+      <div class="p-6">
+        @if ($hourlyTrends->count() > 0)
+          <div class="h-64 flex items-end space-x-2">
+            @foreach ($hourlyTrends as $hour => $data)
+              <div class="flex-1 flex flex-col items-center">
+                <div class="w-full bg-blue-200 rounded-t" style="height: {{ ($data['count'] / $hourlyTrends->max('count')) * 200 }}px"></div>
+                <span class="text-xs text-gray-500 mt-2">{{ $hour }}</span>
+              </div>
+            @endforeach
+          </div>
+        @else
+          <p class="text-gray-500 text-center py-4">No hourly trends data available</p>
+        @endif
+      </div>
     </x-card>
+
+    <!-- Transaction Types and Client Types -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Transaction Types Breakdown -->
+      <x-card title="Transaction Types Breakdown">
+        <div class="p-6">
+          @if ($transactionTypes->count() > 0)
+            <div class="space-y-4">
+              @foreach ($transactionTypes as $type => $data)
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">{{ $type }}</span>
+                      <span class="text-sm text-gray-500">{{ $data['count'] }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-blue-600 h-2 rounded-full" style="width: {{ ($data['count'] / $transactionTypes->max('count')) * 100 }}%"></div>
+                    </div>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <p class="text-gray-500 text-center py-4">No transaction types data available</p>
+          @endif
+        </div>
+      </x-card>
+
+      <!-- Client Types Breakdown -->
+      <x-card title="Client Types Breakdown">
+        <div class="p-6">
+          @if ($clientTypes->count() > 0)
+            <div class="space-y-4">
+              @foreach ($clientTypes as $type => $data)
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">{{ $type }}</span>
+                      <span class="text-sm text-gray-500">{{ $data['count'] }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-green-600 h-2 rounded-full" style="width: {{ ($data['count'] / $clientTypes->max('count')) * 100 }}%"></div>
+                    </div>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <p class="text-gray-500 text-center py-4">No client types data available</p>
+          @endif
+        </div>
+      </x-card>
+    </div>
+
+    <!-- Top Clients and Services -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Top Clients -->
+      <x-card title="Top Clients by Revenue">
+        <div class="p-6">
+          @if ($topClients->count() > 0)
+            <div class="space-y-4">
+              @foreach ($topClients as $client)
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div class="flex-1">
+                    <h4 class="text-sm font-medium text-gray-900">{{ $client['client_name'] }}</h4>
+                    <p class="text-xs text-gray-500">{{ $client['client_type'] }}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-sm font-semibold text-gray-900">@formatCurrency($client['total_revenue'])</p>
+                    <p class="text-xs text-gray-500">{{ $client['transaction_count'] }} transactions</p>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <p class="text-gray-500 text-center py-4">No client data available</p>
+          @endif
+        </div>
+      </x-card>
+
+      <!-- Top Services -->
+      <x-card title="Top Services by Usage">
+        <div class="p-6">
+          @if ($topServices->count() > 0)
+            <div class="space-y-4">
+              @foreach ($topServices as $service)
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div class="flex-1">
+                    <h4 class="text-sm font-medium text-gray-900">{{ $service['service_name'] }}</h4>
+                    <p class="text-xs text-gray-500">Service ID: {{ $service['service_id'] }}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-sm font-semibold text-gray-900">{{ $service['usage_count'] }}</p>
+                    <p class="text-xs text-gray-500">@formatCurrency($service['total_revenue'])</p>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <p class="text-gray-500 text-center py-4">No service data available</p>
+          @endif
+        </div>
+      </x-card>
+    </div>
+
+    <!-- Status and Charge Breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Status Breakdown -->
+      <x-card title="Status Breakdown">
+        <div class="p-6">
+          @if ($statusBreakdown->count() > 0)
+            <div class="space-y-4">
+              @foreach ($statusBreakdown as $status => $data)
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">{{ $status }}</span>
+                      <span class="text-sm text-gray-500">{{ $data['count'] }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-purple-600 h-2 rounded-full" style="width: {{ ($data['count'] / $statusBreakdown->max('count')) * 100 }}%"></div>
+                    </div>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <p class="text-gray-500 text-center py-4">No status data available</p>
+          @endif
+        </div>
+      </x-card>
+
+      <!-- Charge Breakdown -->
+      <x-card title="Charge vs Non-Charge">
+        <div class="p-6">
+          @if ($chargeBreakdown->count() > 0)
+            <div class="space-y-4">
+              @foreach ($chargeBreakdown as $charge => $data)
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <span class="text-sm font-medium text-gray-700">{{ $charge }}</span>
+                      <span class="text-sm text-gray-500">{{ $data['count'] }}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-orange-600 h-2 rounded-full" style="width: {{ ($data['count'] / $chargeBreakdown->max('count')) * 100 }}%"></div>
+                    </div>
+                  </div>
+                </div>
+              @endforeach
+            </div>
+          @else
+            <p class="text-gray-500 text-center py-4">No charge data available</p>
+          @endif
+        </div>
+      </x-card>
+    </div>
   </div>
 @endsection

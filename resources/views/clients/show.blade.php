@@ -117,7 +117,7 @@
               </div>
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-0.5">Member Since</label>
-                <p class="text-sm font-semibold text-gray-900">{{ $client->created_at->format('F d, Y') }}</p>
+                <p class="text-sm font-semibold text-gray-900">{{ $client->created_at ? $client->created_at->format('F d, Y') : 'N/A' }}</p>
               </div>
             </div>
           </div>

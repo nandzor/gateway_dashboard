@@ -15,6 +15,8 @@ use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\CctvLiveStreamController;
 use App\Http\Controllers\EventLogController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ApiCredentialController;
 use App\Http\Controllers\BranchEventSettingController;
 use App\Http\Controllers\WhatsAppSettingsController;
@@ -110,10 +112,17 @@ Route::middleware('auth')->group(function () {
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/dashboard', [ReportController::class, 'dashboard'])->name('dashboard');
         Route::get('/dashboard/export', [ReportController::class, 'exportDashboard'])->name('dashboard.export');
-        Route::get('/daily', [ReportController::class, 'daily'])->name('daily');
-        Route::get('/daily/export', [ReportController::class, 'exportDaily'])->name('daily.export');
-        Route::get('/monthly', [ReportController::class, 'monthly'])->name('monthly');
-        Route::get('/monthly/export', [ReportController::class, 'exportMonthly'])->name('monthly.export');
+        Route::get('/daily', [ReportsController::class, 'daily'])->name('daily');
+        Route::get('/daily/export', [ReportsController::class, 'exportDaily'])->name('daily.export');
+        Route::get('/monthly', [ReportsController::class, 'monthly'])->name('monthly');
+        Route::get('/monthly/export', [ReportsController::class, 'exportMonthly'])->name('monthly.export');
+    });
+
+    // Analytics
+    Route::prefix('analytics')->name('analytics.')->group(function () {
+        Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+        Route::get('/data', [AnalyticsController::class, 'getData'])->name('data');
+        Route::get('/export', [AnalyticsController::class, 'export'])->name('export');
     });
 
     // Admin-only routes
