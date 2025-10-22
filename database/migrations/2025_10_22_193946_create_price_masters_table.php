@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('price_masters', function (Blueprint $table) {
             $table->id();
-            $table->integer('module_id')->nullable();
-            $table->decimal('price_default', 15, 3)->nullable();
-            $table->smallInteger('is_active')->nullable();
+            $table->unsignedBigInteger('module_id');
+            $table->decimal('price_default', 11, 3);
+            $table->boolean('is_active')->default(true);
             $table->string('note', 50)->nullable();
+            $table->unsignedBigInteger('currency_id');
             $table->timestamps();
-            $table->smallInteger('currency_id')->default(1);
+
+            // Foreign key constraints
+            $table->foreign('module_id')->references('id')->on('services')->onDelete('cascade');
+            $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
         });
     }
 
@@ -30,4 +34,3 @@ return new class extends Migration
         Schema::dropIfExists('price_masters');
     }
 };
-

@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('currencies', function (Blueprint $table) {
             $table->id();
-            $table->char('name', 10)->nullable();
-            $table->smallInteger('is_active')->nullable();
+            $table->string('name');
+            $table->string('code', 3)->unique();
+            $table->string('symbol', 10);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -27,4 +29,3 @@ return new class extends Migration
         Schema::dropIfExists('currencies');
     }
 };
-
