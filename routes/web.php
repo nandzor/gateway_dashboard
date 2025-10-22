@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PriceMasterController;
+use App\Http\Controllers\PriceCustomController;
 use App\Http\Controllers\CompanyGroupController;
 use App\Http\Controllers\CompanyBranchController;
 use App\Http\Controllers\DeviceMasterController;
@@ -79,6 +80,7 @@ Route::middleware('auth')->group(function () {
     // Service CRUD
     Route::resource('services', ServiceController::class);
     Route::resource('price-masters', PriceMasterController::class);
+    Route::resource('price-customs', PriceCustomController::class);
     Route::post('/services/{service}/restore', [ServiceController::class, 'restore'])->name('services.restore');
 
     // Company Branches CRUD
