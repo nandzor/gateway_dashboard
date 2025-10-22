@@ -118,7 +118,7 @@ class UserController extends Controller {
             'username' => 'required|string|max:150|unique:users,username,' . $id,
             'name' => 'required|string|max:100',
             'email' => 'required|string|email|max:50|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => 'nullable|string|min:6',
             'role' => 'required|in:admin,operator,viewer,user',
             'is_active' => 'nullable|in:0,1',
         ]);

@@ -101,9 +101,7 @@
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alert Zero</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
@@ -123,18 +121,8 @@
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <x-badge :variant="$service->type == 1 ? 'info' : 'warning'">
-                      {{ $service->type_name }}
-                    </x-badge>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
                     <x-badge :variant="$service->is_active == 1 ? 'success' : 'danger'">
                       {{ $service->is_active == 1 ? 'Active' : 'Inactive' }}
-                    </x-badge>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <x-badge :variant="$service->is_alert_zero == 1 ? 'warning' : 'secondary'">
-                      {{ $service->is_alert_zero == 1 ? 'Yes' : 'No' }}
                     </x-badge>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -43,8 +43,15 @@ class NumberHelper
             return $sign . $currency . ' ' . $formatted . 'jt';
         } elseif ($absNumber >= 1000) {
             // Ribu
-            $value = round($absNumber / 1000);
-            $formatted = number_format($value, 0, '.', '');
+            $value = $absNumber / 1000;
+            // For amounts less than 10,000, show 1 decimal place
+            if ($absNumber < 10000) {
+                $formatted = number_format($value, 1, '.', '');
+                $formatted = rtrim(rtrim($formatted, '0'), '.');
+            } else {
+                $value = round($value);
+                $formatted = number_format($value, 0, '.', '');
+            }
             return $sign . $currency . ' ' . $formatted . 'rb';
         } else {
             // Kurang dari ribu
@@ -135,8 +142,15 @@ class NumberHelper
             return $sign . $currency . ' ' . $formatted . ' Juta';
         } elseif ($absNumber >= 1000) {
             // Ribu
-            $value = round($absNumber / 1000);
-            $formatted = number_format($value, 0, ',', '.');
+            $value = $absNumber / 1000;
+            // For amounts less than 10,000, show 1 decimal place
+            if ($absNumber < 10000) {
+                $formatted = number_format($value, 1, ',', '.');
+                $formatted = rtrim(rtrim($formatted, '0'), '.');
+            } else {
+                $value = round($value);
+                $formatted = number_format($value, 0, ',', '.');
+            }
             return $sign . $currency . ' ' . $formatted . ' Ribu';
         } else {
             // Kurang dari ribu

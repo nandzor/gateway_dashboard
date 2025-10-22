@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\CompanyGroupController;
 use App\Http\Controllers\CompanyBranchController;
 use App\Http\Controllers\DeviceMasterController;
@@ -59,9 +60,12 @@ Route::middleware('auth')->group(function () {
         return view('pages.currencies.index');
     })->name('currencies.index');
 
-    Route::get('/histories', function () {
-        return view('pages.histories.index');
-    })->name('histories.index');
+    // Histories
+    Route::get('/histories', [HistoryController::class, 'index'])->name('histories.index');
+    Route::get('/histories/export', [HistoryController::class, 'export'])->name('histories.export');
+    Route::get('/histories/{history}', [HistoryController::class, 'show'])->name('histories.show');
+    Route::get('/clients/{client}/histories', [HistoryController::class, 'byClient'])->name('histories.by-client');
+    Route::get('/services/{service}/histories', [HistoryController::class, 'byService'])->name('histories.by-service');
 
     Route::get('/price-custom', function () {
         return view('pages.price-custom.index');

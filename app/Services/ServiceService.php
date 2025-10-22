@@ -46,6 +46,10 @@ class ServiceService
      */
     public function createService(array $data): Service
     {
+        // Set default values for removed fields
+        $data['type'] = $data['type'] ?? 1; // Default to Internal
+        $data['is_alert_zero'] = $data['is_alert_zero'] ?? 0; // Default to No alert
+
         return Service::create($data);
     }
 
@@ -54,6 +58,10 @@ class ServiceService
      */
     public function updateService(Service $service, array $data): bool
     {
+        // Set default values for removed fields if not provided
+        $data['type'] = $data['type'] ?? $service->type ?? 1; // Keep existing or default to Internal
+        $data['is_alert_zero'] = $data['is_alert_zero'] ?? $service->is_alert_zero ?? 0; // Keep existing or default to No alert
+
         return $service->update($data);
     }
 
@@ -116,17 +124,6 @@ class ServiceService
     }
 
     /**
-     * Get service type options
-     */
-    public function getServiceTypeOptions(): array
-    {
-        return [
-            1 => 'Internal',
-            2 => 'External',
-        ];
-    }
-
-    /**
      * Validate service data
      */
     public function validateServiceData(array $data): array
@@ -135,14 +132,6 @@ class ServiceService
 
         if (empty($data['name'])) {
             $errors['name'] = 'Service name is required';
-        }
-
-        if (empty($data['type'])) {
-            $errors['type'] = 'Service type is required';
-        }
-
-        if (!in_array($data['type'], [1, 2, 3, 4])) {
-            $errors['type'] = 'Invalid service type';
         }
 
         return $errors;

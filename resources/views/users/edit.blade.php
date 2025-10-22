@@ -46,9 +46,6 @@
         <x-input type="password" name="password" label="New Password" placeholder="Leave blank to keep current"
           hint="Password must be at least 6 characters" />
 
-        <x-input type="password" name="password_confirmation" label="Confirm New Password"
-          placeholder="Re-enter new password" />
-
         <x-select name="role" label="User Role" :options="['user' => 'Regular User', 'admin' => 'Administrator', 'operator' => 'Operator', 'viewer' => 'Viewer']" :selected="$user->role" required
           hint="Choose the appropriate role for this user" />
 

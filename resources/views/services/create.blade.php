@@ -40,22 +40,6 @@
             @enderror
           </div>
 
-          <!-- Service Type -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
-            <x-select name="type" required>
-              <option value="">Select service type</option>
-              @foreach($typeOptions as $value => $label)
-                <option value="{{ $value }}" {{ old('type') == $value ? 'selected' : '' }}>
-                  {{ $label }}
-                </option>
-              @endforeach
-            </x-select>
-            @error('type')
-              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-          </div>
-
           <!-- Status -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
@@ -72,25 +56,6 @@
             @error('is_active')
               <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
-          </div>
-
-          <!-- Alert Zero -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Alert Zero</label>
-            <div class="space-y-2">
-              <label class="flex items-center">
-                <input type="radio" name="is_alert_zero" value="1" {{ old('is_alert_zero') == '1' ? 'checked' : '' }} class="mr-2">
-                <span class="text-sm text-gray-700">Yes - Alert when balance reaches zero</span>
-              </label>
-              <label class="flex items-center">
-                <input type="radio" name="is_alert_zero" value="0" {{ old('is_alert_zero', '0') == '0' ? 'checked' : '' }} class="mr-2">
-                <span class="text-sm text-gray-700">No - No alert for zero balance</span>
-              </label>
-            </div>
-            @error('is_alert_zero')
-              <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-            @enderror
-          </div>
         </div>
 
         <!-- Form Actions -->

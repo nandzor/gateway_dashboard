@@ -41,8 +41,7 @@ class ServiceController extends Controller
      */
     public function create()
     {
-        $typeOptions = $this->serviceService->getServiceTypeOptions();
-        return view('services.create', compact('typeOptions'));
+        return view('services.create');
     }
 
     /**
@@ -78,8 +77,7 @@ class ServiceController extends Controller
      */
     public function edit(Service $service)
     {
-        $typeOptions = $this->serviceService->getServiceTypeOptions();
-        return view('services.edit', compact('service', 'typeOptions'));
+        return view('services.edit', compact('service'));
     }
 
     /**

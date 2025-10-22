@@ -18,6 +18,12 @@
           </div>
         </div>
         <div class="flex space-x-3">
+          <x-button variant="secondary" :href="route('histories.by-service', $service)">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            View Histories
+          </x-button>
           <x-button variant="secondary" :href="route('services.edit', $service)">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -47,26 +53,10 @@
             <p class="text-sm text-gray-900 mt-1">{{ $service->name }}</p>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-500">Service Type</label>
-            <div class="mt-1">
-              <x-badge :variant="$service->type == 1 ? 'info' : 'warning'">
-                {{ $service->type_name }}
-              </x-badge>
-            </div>
-          </div>
-          <div>
             <label class="text-sm font-medium text-gray-500">Status</label>
             <div class="mt-1">
               <x-badge :variant="$service->is_active == 1 ? 'success' : 'danger'">
                 {{ $service->is_active == 1 ? 'Active' : 'Inactive' }}
-              </x-badge>
-            </div>
-          </div>
-          <div>
-            <label class="text-sm font-medium text-gray-500">Alert Zero</label>
-            <div class="mt-1">
-              <x-badge :variant="$service->is_alert_zero == 1 ? 'warning' : 'secondary'">
-                {{ $service->is_alert_zero == 1 ? 'Yes' : 'No' }}
               </x-badge>
             </div>
           </div>

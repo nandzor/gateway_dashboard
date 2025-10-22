@@ -58,6 +58,18 @@
                 @if(request()->has('date_to'))
                     url.searchParams.set('date_to', '{{ request()->get('date_to') }}');
                 @endif
+                @if(request()->has('status'))
+                    url.searchParams.set('status', '{{ request()->get('status') }}');
+                @endif
+                @if(request()->has('transaction_type'))
+                    url.searchParams.set('transaction_type', '{{ request()->get('transaction_type') }}');
+                @endif
+                @if(request()->has('client_id'))
+                    url.searchParams.set('client_id', '{{ request()->get('client_id') }}');
+                @endif
+                @if(request()->has('service_id'))
+                    url.searchParams.set('service_id', '{{ request()->get('service_id') }}');
+                @endif
 
                 window.location.href = url.toString();
             }

@@ -9,8 +9,6 @@ class History extends Model
 {
     use HasFactory;
 
-    protected $table = 'histories';
-
     protected $fillable = [
         'user_id',
         'client_id',
@@ -32,16 +30,78 @@ class History extends Model
     ];
 
     protected $casts = [
+        'user_id' => 'integer',
+        'client_id' => 'integer',
+        'client_type' => 'integer',
+        'trx_type' => 'integer',
         'trx_date' => 'datetime',
+        'module_id' => 'integer',
         'price' => 'decimal:3',
-        'duration' => 'double',
+        'duration' => 'float',
         'is_charge' => 'integer',
         'is_local' => 'integer',
+        'node_id' => 'integer',
         'is_dashboard' => 'integer',
         'currency_id' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * Scope: Successful transactions
+     */
+    public function scopeSuccessful($query)
+    {
+        return $query->where('status', 'success');
+    }
+
+    /**
+     * Scope: Failed transactions
+     */
+    public function scopeFailed($query)
+    {
+        return $query->where('status', 'failed');
+    }
+
+    /**
+     * Scope: Pending transactions
+     */
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    /**
+     * Scope: By transaction type
+     */
+    public function scopeByType($query, $type)
+    {
+        return $query->where('trx_type', $type);
+    }
+
+    /**
+     * Scope: By client type
+     */
+    public function scopeByClientType($query, $clientType)
+    {
+        return $query->where('client_type', $clientType);
+    }
+
+    /**
+     * Scope: Charged transactions
+     */
+    public function scopeCharged($query)
+    {
+        return $query->where('is_charge', 1);
+    }
+
+    /**
+     * Scope: Local transactions
+     */
+    public function scopeLocal($query)
+    {
+        return $query->where('is_local', 1);
+    }
 
     /**
      * Get the user that owns the history
@@ -60,7 +120,7 @@ class History extends Model
     }
 
     /**
-     * Get the service/module
+     * Get the service/module that owns the history
      */
     public function service()
     {
@@ -68,107 +128,65 @@ class History extends Model
     }
 
     /**
-     * Scope: By client
+     * Get status badge variant
      */
-    public function scopeByClient($query, $clientId)
+    public function getStatusBadgeVariantAttribute(): string
     {
-        return $query->where('client_id', $clientId);
+        return match($this->status) {
+            'success' => 'success',
+            'failed' => 'danger',
+            'pending' => 'warning',
+            'error' => 'danger',
+            default => 'secondary'
+        };
     }
 
     /**
-     * Scope: By date range
+     * Get status display name
      */
-    public function scopeDateRange($query, $startDate, $endDate)
+    public function getStatusDisplayAttribute(): string
     {
-        return $query->whereBetween('trx_date', [$startDate, $endDate]);
+        return match($this->status) {
+            'success' => 'Success',
+            'failed' => 'Failed',
+            'pending' => 'Pending',
+            'error' => 'Error',
+            default => ucfirst($this->status ?? 'Unknown')
+        };
     }
 
     /**
-     * Scope: Today's transactions
+     * Get transaction type display name
      */
-    public function scopeToday($query)
+    public function getTransactionTypeDisplayAttribute(): string
     {
-        return $query->whereDate('trx_date', today());
+        return match($this->trx_type) {
+            1 => 'Credit',
+            2 => 'Debit',
+            3 => 'Refund',
+            4 => 'Adjustment',
+            default => 'Type ' . $this->trx_type
+        };
     }
 
     /**
-     * Scope: This month's transactions
+     * Get client type display name
      */
-    public function scopeThisMonth($query)
+    public function getClientTypeDisplayAttribute(): string
     {
-        return $query->whereMonth('trx_date', now()->month)
-                    ->whereYear('trx_date', now()->year);
+        return match($this->client_type) {
+            1 => 'Prepaid',
+            2 => 'Postpaid',
+            default => 'Type ' . $this->client_type
+        };
     }
 
     /**
-     * Scope: Charged transactions
-     */
-    public function scopeCharged($query)
-    {
-        return $query->where('is_charge', 1);
-    }
-
-    /**
-     * Scope: Free transactions
-     */
-    public function scopeFree($query)
-    {
-        return $query->where('is_charge', 0);
-    }
-
-    /**
-     * Scope: By transaction type
-     */
-    public function scopeByType($query, $type)
-    {
-        return $query->where('trx_type', $type);
-    }
-
-    /**
-     * Scope: By status
-     */
-    public function scopeByStatus($query, $status)
-    {
-        return $query->where('status', $status);
-    }
-
-    /**
-     * Get transaction type name
-     */
-    public function getTransactionTypeNameAttribute(): string
-    {
-        $types = [
-            1 => 'API Call',
-            2 => 'Service Usage',
-            3 => 'Data Transfer',
-            4 => 'Storage',
-            5 => 'Processing',
-        ];
-
-        return $types[$this->trx_type] ?? 'Unknown';
-    }
-
-    /**
-     * Get client type name
-     */
-    public function getClientTypeNameAttribute(): string
-    {
-        $types = [
-            1 => 'Individual',
-            2 => 'Corporate',
-            3 => 'Government',
-            4 => 'NGO',
-        ];
-
-        return $types[$this->client_type] ?? 'Unknown';
-    }
-
-    /**
-     * Get formatted price
+     * Get formatted price with currency
      */
     public function getFormattedPriceAttribute(): string
     {
-        return '$' . number_format($this->price ?? 0, 2);
+        return \App\Helpers\NumberHelper::formatCurrency($this->price ?? 0);
     }
 
     /**
@@ -176,36 +194,42 @@ class History extends Model
      */
     public function getFormattedDurationAttribute(): string
     {
-        if ($this->duration < 60) {
-            return number_format($this->duration, 2) . 's';
-        } elseif ($this->duration < 3600) {
-            return number_format($this->duration / 60, 2) . 'm';
+        if ($this->duration === null) {
+            return 'N/A';
+        }
+
+        $hours = floor($this->duration / 3600);
+        $minutes = floor(($this->duration % 3600) / 60);
+        $seconds = $this->duration % 60;
+
+        if ($hours > 0) {
+            return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
         } else {
-            return number_format($this->duration / 3600, 2) . 'h';
+            return sprintf('%02d:%02d', $minutes, $seconds);
         }
     }
 
     /**
-     * Check if transaction is successful
+     * Get charge status display
      */
-    public function isSuccessful(): bool
+    public function getChargeStatusDisplayAttribute(): string
     {
-        return $this->status === 'success' || $this->status === 'completed';
+        return $this->is_charge ? 'Yes' : 'No';
     }
 
     /**
-     * Check if transaction is charged
+     * Get local status display
      */
-    public function isCharged(): bool
+    public function getLocalStatusDisplayAttribute(): string
     {
-        return $this->is_charge === 1;
+        return $this->is_local ? 'Local' : 'Remote';
     }
 
     /**
-     * Check if transaction is local
+     * Get dashboard status display
      */
-    public function isLocal(): bool
+    public function getDashboardStatusDisplayAttribute(): string
     {
-        return $this->is_local === 1;
+        return $this->is_dashboard ? 'Dashboard' : 'API';
     }
 }
