@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ClientServiceAssignmentController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CompanyGroupController;
 use App\Http\Controllers\CompanyBranchController;
@@ -54,13 +53,6 @@ Route::middleware('auth')->group(function () {
 
     // Client CRUD
     Route::resource('clients', ClientController::class);
-
-    // Client Service Assignments
-    Route::resource('client-service-assignments', ClientServiceAssignmentController::class)->except(['show', 'edit', 'update']);
-    Route::get('/clients/{client}/service-assignments', [ClientServiceAssignmentController::class, 'index'])->name('client-service-assignments.index');
-    Route::get('/clients/{client}/service-assignments/create', [ClientServiceAssignmentController::class, 'create'])->name('client-service-assignments.create');
-    Route::post('/clients/{client}/service-assignments', [ClientServiceAssignmentController::class, 'store'])->name('client-service-assignments.store');
-    Route::delete('/clients/{client}/service-assignments/{service}', [ClientServiceAssignmentController::class, 'destroy'])->name('client-service-assignments.destroy');
 
     // Additional Management Routes (Placeholder routes for new menu items)
     Route::get('/currencies', function () {

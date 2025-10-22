@@ -7,6 +7,7 @@ use App\Services\ClientService;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClientController extends Controller
 {
@@ -67,7 +68,7 @@ class ClientController extends Controller
     {
         $typeOptions = $this->clientService->getTypeOptions();
         $serviceModuleOptions = $this->clientService->getServiceModuleOptions();
-        
+
         // Generate preview credentials
         $previewCredentials = [
             'ak' => $this->clientService->generateAccessKey(),
@@ -89,12 +90,18 @@ class ClientController extends Controller
             $data['is_active'] = $data['is_active'] ?? 1;
             $data['is_staging'] = $data['is_staging'] ?? 0;
 
-            $this->clientService->createClient($data);
+            // Handle white_list conversion from string to array
+            if (isset($data['white_list']) && is_string($data['white_list'])) {
+                $data['white_list'] = array_filter(explode(',', $data['white_list']));
+            }
+
+            $client = $this->clientService->createClient($data);
 
             return redirect()
                 ->route('clients.index')
                 ->with('success', 'Client created successfully.');
         } catch (\Exception $e) {
+            Log::error('Client creation failed: ' . $e->getMessage());
             return redirect()
                 ->back()
                 ->withInput()
@@ -108,15 +115,17 @@ class ClientController extends Controller
     public function show(Client $client)
     {
         $client = $this->clientService->getClientWithDetails($client->id);
-
         if (!$client) {
             abort(404, 'Client not found.');
         }
 
         // Calculate days since created
-        $createdDate = $client->created_at->startOfDay();
-        $currentDate = now()->startOfDay();
-        $daysSinceCreated = (int) $createdDate->diffInDays($currentDate);
+        $daysSinceCreated = 0; // Default value
+        if ($client->created_at) {
+            $createdDate = $client->created_at->startOfDay();
+            $currentDate = now()->startOfDay();
+            $daysSinceCreated = (int) $createdDate->diffInDays($currentDate);
+        }
 
         return view('clients.show', compact('client', 'daysSinceCreated'));
     }
@@ -139,6 +148,12 @@ class ClientController extends Controller
     {
         try {
             $data = $request->validated();
+
+            // Handle white_list conversion from string to array
+            if (isset($data['white_list']) && is_string($data['white_list'])) {
+                $data['white_list'] = array_filter(explode(',', $data['white_list']));
+            }
+
             $this->clientService->updateClient($client, $data);
 
             return redirect()

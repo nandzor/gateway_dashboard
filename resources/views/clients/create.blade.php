@@ -10,20 +10,42 @@
         <p class="text-sm text-gray-500">Fill in the details to create a new client account</p>
       </div>
 
-      <form method="POST" action="{{ route('clients.store') }}" class="space-y-6">
+      @if ($errors->any())
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">There were errors with your submission:</h3>
+              <div class="mt-2 text-sm text-red-700">
+                <ul class="list-disc pl-5 space-y-1">
+                  @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                  @endforeach
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      @endif
+
+      <form method="POST" action="{{ route('clients.store') }}" class="space-y-6" id="client-form">
         @csrf
 
         <!-- Basic Information -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <x-input name="client_name" label="Client Name" placeholder="Enter client name" required />
+          <x-input name="client_name" label="Client Name" placeholder="Enter client name" :value="old('client_name')" required />
 
-          <x-select name="type" label="Client Type" :options="$typeOptions" placeholder="Select client type" required />
+          <x-select name="type" label="Client Type" :options="$typeOptions" :selected="old('type')" placeholder="Select client type" required />
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <x-input name="address" label="Address" placeholder="Enter client address" />
+          <x-input name="address" label="Address" placeholder="Enter client address" :value="old('address')" />
 
-          <x-input name="contact" label="Contact" placeholder="Enter contact information" />
+          <x-input name="contact" label="Contact" placeholder="Enter contact information" :value="old('contact')" />
         </div>
 
         <!-- API Credentials -->
@@ -64,6 +86,7 @@
             <x-multi-select name="service_assignments"
                            label="Assign Services"
                            :options="$serviceModuleOptions"
+                           :selected="old('service_assignments', [])"
                            placeholder="Select services to assign" />
           </div>
         </div>
@@ -74,6 +97,7 @@
           <div class="grid grid-cols-1 gap-6">
             <x-ip-tags-input name="white_list"
                            label="Whitelist IPs"
+                           :value="old('white_list', [])"
                            placeholder="Enter IP address and press Enter" />
           </div>
         </div>
@@ -82,9 +106,9 @@
         <div class="border-t pt-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">Status Settings</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <x-select name="is_active" label="Status" :options="[1 => 'Active', 0 => 'Inactive']" :selected="1" placeholder="Select status" required />
+            <x-select name="is_active" label="Status" :options="[1 => 'Active', 0 => 'Inactive']" :selected="old('is_active', 1)" placeholder="Select status" required />
 
-            <x-select name="is_staging" label="Environment" :options="[0 => 'Production', 1 => 'Staging']" :selected="0" placeholder="Select environment" required />
+            <x-select name="is_staging" label="Environment" :options="[0 => 'Production', 1 => 'Staging']" :selected="old('is_staging', 0)" placeholder="Select environment" required />
           </div>
         </div>
 
@@ -105,3 +129,32 @@
 
   <x-copy-script />
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('client-form');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            console.log('Form submission started...');
+
+            // Check if form is valid
+            if (!form.checkValidity()) {
+                console.log('Form validation failed');
+                return;
+            }
+
+            console.log('Form is valid, submitting...');
+
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Creating Client...';
+            }
+        });
+    }
+});
+</script>
+@endpush

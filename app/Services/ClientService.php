@@ -183,9 +183,13 @@ class ClientService extends BaseService
      */
     public function getClientWithDetails(int $id): ?Client
     {
-        return Client::with(['balances' => function($query) {
-            $query->latest();
-        }])->find($id);
+        return Client::with([
+            'balances' => function($query) {
+                $query->latest();
+            },
+            'services:id,name',
+            'serviceModule:id,name'
+        ])->find($id);
         // TODO: Add other relationships when models are created
         // return Client::with(['credentials', 'balances', 'histories', 'services', 'whitelistIps'])
         //     ->find($id);
@@ -481,30 +485,6 @@ class ClientService extends BaseService
     }
 
     /**
-     * Get assigned services for client
-     */
-    public function getAssignedServices(Client $client): \Illuminate\Database\Eloquent\Collection
-    {
-        return $client->services()->get();
-    }
-
-    /**
-     * Get available services for assignment
-     */
-    public function getAvailableServices(): \Illuminate\Database\Eloquent\Collection
-    {
-        return \App\Models\Service::active()->get();
-    }
-
-    /**
-     * Check if service is assigned to client
-     */
-    public function isServiceAssigned(Client $client, int $serviceId): bool
-    {
-        return $client->services()->where('service_id', $serviceId)->exists();
-    }
-
-    /**
      * Generate Access Key (AK)
      */
     public function generateAccessKey(): string
@@ -542,7 +522,7 @@ class ClientService extends BaseService
     public function createServiceAssignments(Client $client, array $serviceIds): void
     {
         foreach ($serviceIds as $serviceId) {
-            \App\Models\ServiceAssign::create([
+            \App\Models\ClientServiceAssignment::create([
                 'client_id' => $client->id,
                 'service_id' => $serviceId,
             ]);

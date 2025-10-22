@@ -35,6 +35,11 @@ class Client extends Model
         'service_module' => 'integer',
     ];
 
+    protected $appends = [
+        'service_allow_name',
+        'service_module_name',
+    ];
+
     /**
      * Get client credentials
      * TODO: Uncomment when ClientCredential model is created
@@ -62,11 +67,11 @@ class Client extends Model
     // }
 
     /**
-     * Get assigned services through service_assigns table
+     * Get assigned services through service_assign table
      */
     public function serviceAssigns()
     {
-        return $this->hasMany(ServiceAssign::class);
+        return $this->hasMany(ClientServiceAssignment::class);
     }
 
     /**
@@ -74,7 +79,15 @@ class Client extends Model
      */
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'service_assigns');
+        return $this->belongsToMany(Service::class, 'service_assign');
+    }
+
+    /**
+     * Get the configured service module (single) via foreign key `service_module`.
+     */
+    public function serviceModule()
+    {
+        return $this->belongsTo(Service::class, 'service_module');
     }
 
     /**
@@ -198,6 +211,22 @@ class Client extends Model
     public function getServiceAssignmentsAttribute(): array
     {
         return $this->serviceAssigns()->pluck('service_id')->toArray();
+    }
+
+    /**
+     * Get assigned service names as array (from service_assigns -> services.name)
+     */
+    public function getServiceAllowNameAttribute(): array
+    {
+        return $this->services()->pluck('name')->toArray();
+    }
+
+    /**
+     * Get service module name instead of ID.
+     */
+    public function getServiceModuleNameAttribute(): ?string
+    {
+        return $this->serviceModule ? $this->serviceModule->name : null;
     }
 
     /**

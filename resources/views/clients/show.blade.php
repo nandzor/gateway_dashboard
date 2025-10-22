@@ -132,7 +132,7 @@
               </div>
               <div>
                 <label class="block text-xs font-medium text-gray-500 mb-0.5">Last Updated</label>
-                <p class="text-sm font-semibold text-gray-900">{{ $client->updated_at->format('M d, Y - h:i A') }}</p>
+                <p class="text-sm font-semibold text-gray-900">{{ $client->updated_at ? $client->updated_at->format('M d, Y - h:i A') : 'N/A' }}</p>
               </div>
             </div>
           </div>
@@ -203,7 +203,7 @@
         @endif
 
         <!-- Service Configuration -->
-        @if($client->service_module || $client->service_allow)
+        @if(!empty($client->service_allow_name))
           <div class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
             <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
               <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,18 +213,16 @@
               Service Configuration
             </h4>
             <div class="space-y-3">
-              @if($client->service_module)
-                <div>
-                  <p class="text-sm font-medium text-gray-600">Service Module</p>
-                  <p class="text-sm text-gray-900">{{ $client->service_module }}</p>
+              <div>
+                <p class="text-sm font-medium text-gray-600 mb-2">Assigned Services</p>
+                <div class="flex flex-wrap gap-2">
+                  @foreach($client->service_allow_name as $serviceName)
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      {{ $serviceName }}
+                    </span>
+                  @endforeach
                 </div>
-              @endif
-              @if($client->service_allow)
-                <div>
-                  <p class="text-sm font-medium text-gray-600">Service Allow</p>
-                  <p class="text-sm text-gray-900 whitespace-pre-line">{{ $client->service_allow }}</p>
-                </div>
-              @endif
+              </div>
             </div>
           </div>
         @endif
@@ -280,7 +278,7 @@
               </div>
             </div>
             <div class="mt-3 text-center">
-              <p class="text-xs text-gray-500">Last updated: {{ $currentBalance->updated_at->format('M d, Y - h:i A') }}</p>
+              <p class="text-xs text-gray-500">Last updated: {{ $currentBalance->updated_at ? $currentBalance->updated_at->format('M d, Y - h:i A') : 'N/A' }}</p>
             </div>
           </div>
         @endif
@@ -344,12 +342,6 @@
                 Deactivate
               </x-button>
             @endif
-            <x-button variant="secondary" :href="route('client-service-assignments.index', $client)">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Assign Services
-            </x-button>
             <x-button variant="primary" :href="route('clients.edit', $client)">
               <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

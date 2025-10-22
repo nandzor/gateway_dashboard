@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 */
 
 // Public authentication routes (no versioning)
-Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('api.register');
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 
 // Sanctum protected routes (no versioning)
