@@ -283,6 +283,86 @@
           </div>
         @endif
 
+        <!-- Balance Topup History -->
+        @if($balanceTopups && $balanceTopups->count() > 0)
+          <div class="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg border border-amber-100">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Balance Topup History
+            </h4>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Method</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  @foreach($balanceTopups as $topup)
+                    <tr class="hover:bg-gray-50">
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                        {{ $topup->created_at ? $topup->created_at->format('M d, Y - h:i A') : 'N/A' }}
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-gray-900">
+                        {{ App\Helpers\NumberHelper::formatCurrency($topup->amount) }}
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                        <x-badge :variant="$topup->payment_method === 'bank_transfer' ? 'primary' : ($topup->payment_method === 'credit_card' ? 'success' : 'secondary')" size="sm">
+                          {{ ucfirst(str_replace('_', ' ', $topup->payment_method)) }}
+                        </x-badge>
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 font-mono">
+                        {{ $topup->reference_number ?: 'N/A' }}
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap">
+                        <x-badge :variant="$topup->status === 'approved' ? 'success' : ($topup->status === 'cancelled' ? 'danger' : ($topup->status === 'rejected' ? 'danger' : ($topup->status === 'pending' ? 'warning' : 'secondary')))" size="sm">
+                          {{ ucfirst($topup->status) }}
+                        </x-badge>
+                      </td>
+                      <td class="px-4 py-3 text-sm text-gray-900 max-w-xs truncate">
+                        {{ $topup->notes ?: 'N/A' }}
+                      </td>
+                    </tr>
+                  @endforeach
+                </tbody>
+              </table>
+            </div>
+            <div class="mt-3 text-center">
+              <a href="{{ route('balance-topups.index', ['client_id' => $client->id]) }}" class="text-sm text-amber-600 hover:text-amber-800 font-medium">
+                View All Balance Topups →
+              </a>
+            </div>
+          </div>
+        @else
+          <div class="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+            <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Balance Topup History
+            </h4>
+            <div class="text-center py-6">
+              <svg class="w-12 h-12 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-gray-500 text-sm">No balance topup history found for this client.</p>
+              <a href="{{ route('balance-topups.create', ['client_id' => $client->id]) }}" class="mt-2 inline-flex items-center text-sm text-amber-600 hover:text-amber-800 font-medium">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Balance Topup
+              </a>
+            </div>
+          </div>
+        @endif
+
         <!-- Account Stats -->
         <div class="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg border border-indigo-100">
           <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">

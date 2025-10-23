@@ -127,7 +127,14 @@ class ClientController extends Controller
             $daysSinceCreated = (int) $createdDate->diffInDays($currentDate);
         }
 
-        return view('clients.show', compact('client', 'daysSinceCreated'));
+        // Get balance topup history for this client
+        $balanceTopups = \App\Models\BalanceTopup::where('client_id', $client->id)
+            ->with('client:id,client_name')
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get();
+
+        return view('clients.show', compact('client', 'daysSinceCreated', 'balanceTopups'));
     }
 
     /**
