@@ -79,7 +79,7 @@ class Client extends Model
      */
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'service_assign');
+        return $this->belongsToMany(Service::class, 'service_assigns');
     }
 
     /**

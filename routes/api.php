@@ -1,30 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\AuthController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| CCTV Dashboard API with selective versioning
-| - Auth endpoints (login, register, logout, me): No versioning
-| - Other endpoints: Use /v1/ prefix
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
 |
 */
 
-// Public authentication routes (no versioning)
-Route::post('/register', [AuthController::class, 'register'])->name('api.register');
-Route::post('/login', [AuthController::class, 'login'])->name('api.login');
-
-// Sanctum protected routes (no versioning)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
-    Route::get('/me', [AuthController::class, 'me'])->name('me');
-});
-
-// V1 API routes (with versioning)
-Route::prefix('v1')->group(function () {
-    require __DIR__ . '/api_v1.php';
-});
+// No API routes needed for this application

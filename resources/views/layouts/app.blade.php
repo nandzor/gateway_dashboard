@@ -69,26 +69,6 @@
         <!-- Management Section -->
         <x-sidebar-section title="Management" />
 
-        @if (auth()->user()->isAdmin())
-          <!-- Company Groups (Admin only) -->
-          <x-sidebar-link :href="route('company-groups.index')" :active="request()->routeIs('company-groups.*')">
-            <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\' />'" />
-            Company Groups
-          </x-sidebar-link>
-        @endif
-
-        <!-- Company Branches -->
-        <x-sidebar-link :href="route('company-branches.index')" :active="request()->routeIs('company-branches.*')">
-          <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\' />'" />
-          Branches
-        </x-sidebar-link>
-
-        <!-- Device Masters -->
-        <x-sidebar-link :href="route('device-masters.index')" :active="request()->routeIs('device-masters.*')">
-          <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z\' />'" />
-          Devices
-        </x-sidebar-link>
-
         <!-- Users -->
         <x-sidebar-link :href="route('users.index')" :active="request()->routeIs('users.*')">
           <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z\' />'" />
@@ -114,50 +94,21 @@
         </x-sidebar-link>
 
         <!-- Price Custom -->
-        <x-sidebar-link :href="route('price-custom.index')" :active="request()->routeIs('price-custom.*')">
+        <x-sidebar-link :href="route('price-customs.index')" :active="request()->routeIs('price-customs.*')">
           <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z\' />'" />
-          Price Custom
+          Price Customs
         </x-sidebar-link>
 
         <!-- Price Master -->
-        <x-sidebar-link :href="route('price-master.index')" :active="request()->routeIs('price-master.*')">
+        <x-sidebar-link :href="route('price-masters.index')" :active="request()->routeIs('price-masters.*')">
           <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z\' />'" />
-          Price Master
+          Price Masters
         </x-sidebar-link>
 
         <!-- Services -->
         <x-sidebar-link :href="route('services.index')" :active="request()->routeIs('services.*')">
           <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z\' />'" />
           Services
-        </x-sidebar-link>
-
-        <!-- Monitoring Section -->
-        <x-sidebar-section title="Monitoring" />
-
-        @if (auth()->user()->isAdmin())
-          <!-- CCTV Layouts (Admin only) -->
-          <x-sidebar-link :href="route('cctv-layouts.index')" :active="request()->routeIs('cctv-layouts.*')">
-            <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z\' />'" />
-            CCTV Layouts
-          </x-sidebar-link>
-        @endif
-
-        <!-- CCTV Live Stream -->
-        <x-sidebar-link :href="route('cctv-live-stream.index')" :active="request()->routeIs('cctv-live-stream.*')">
-          <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z\' />'" />
-          Live CCTV
-        </x-sidebar-link>
-
-        <!-- Re-ID Masters (Person Tracking) -->
-        <x-sidebar-link :href="route('re-id-masters.index')" :active="request()->routeIs('re-id-masters.*')">
-          <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z\' />'" />
-          Person Tracking
-        </x-sidebar-link>
-
-        <!-- Event Logs -->
-        <x-sidebar-link :href="route('event-logs.index')" :active="request()->routeIs('event-logs.*')">
-          <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z\' />'" />
-          Event Logs
         </x-sidebar-link>
 
         <!-- Reports Section -->
@@ -184,24 +135,6 @@
         @if (auth()->user()->isAdmin())
           <!-- Admin Section -->
           <x-sidebar-section title="Admin" />
-
-          <!-- API Credentials -->
-          <x-sidebar-link :href="route('api-credentials.index')" :active="request()->routeIs('api-credentials.*')">
-            <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z\' />'" />
-            API Credentials
-          </x-sidebar-link>
-
-          <!-- Branch Event Settings -->
-          <x-sidebar-link :href="route('branch-event-settings.index')" :active="request()->routeIs('branch-event-settings.*')">
-            <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\' />'" />
-            Event Settings
-          </x-sidebar-link>
-
-          <!-- WhatsApp Settings -->
-          <x-sidebar-link :href="route('whatsapp-settings.index')" :active="request()->routeIs('whatsapp-settings.*')">
-            <x-sidebar-icon :icon="'<path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z\' />'" />
-            WhatsApp Settings
-          </x-sidebar-link>
         @endif
       </nav>
 

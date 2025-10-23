@@ -189,9 +189,48 @@ class AnalyticsService extends BaseService
             ];
         });
 
+        // Get additional data for the view
+        $totalClients = Client::count();
+        $activeClients = Client::where('is_active', 1)->count();
+        $totalServices = Service::count();
+        $activeServices = Service::where('is_active', 1)->count();
+
+        // Get transaction status counts
+        $successfulTransactions = $histories->where('status', 'success')->count();
+        $failedTransactions = $histories->where('status', 'failed')->count();
+        $pendingTransactions = $histories->where('status', 'pending')->count();
+
+        // Get revenue data
+        $todayRevenue = $histories->where('status', 'success')
+            ->where('is_charge', 1)
+            ->whereDate('trx_date', Carbon::today())
+            ->sum('price');
+
+        $thisMonthRevenue = $histories->where('status', 'success')
+            ->where('is_charge', 1)
+            ->whereMonth('trx_date', Carbon::now()->month)
+            ->whereYear('trx_date', Carbon::now()->year)
+            ->sum('price');
+
+        // Get recent transactions
+        $recentTransactions = History::with(['client', 'service', 'currency'])
+            ->orderBy('trx_date', 'desc')
+            ->limit(10)
+            ->get();
+
         return [
+            'totalClients' => $totalClients,
+            'activeClients' => $activeClients,
+            'totalServices' => $totalServices,
+            'activeServices' => $activeServices,
             'totalTransactions' => $totalTransactions,
+            'successfulTransactions' => $successfulTransactions,
+            'failedTransactions' => $failedTransactions,
+            'pendingTransactions' => $pendingTransactions,
             'totalRevenue' => $totalRevenue,
+            'todayRevenue' => $todayRevenue,
+            'thisMonthRevenue' => $thisMonthRevenue,
+            'recentTransactions' => $recentTransactions,
             'totalDuration' => $totalDuration,
             'uniqueUsers' => $uniqueUsers,
             'uniqueClients' => $uniqueClients,

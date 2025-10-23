@@ -128,6 +128,14 @@ class History extends Model
     }
 
     /**
+     * Get the currency that owns the history
+     */
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
+    /**
      * Get status badge variant
      */
     public function getStatusBadgeVariantAttribute(): string

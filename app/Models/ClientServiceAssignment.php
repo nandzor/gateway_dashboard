@@ -9,7 +9,7 @@ class ClientServiceAssignment extends Model
 {
     use HasFactory;
 
-    protected $table = 'service_assign';
+    protected $table = 'service_assigns';
 
     protected $fillable = [
         'client_id',

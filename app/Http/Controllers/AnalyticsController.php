@@ -31,4 +31,26 @@ class AnalyticsController extends Controller
         return view('analytics.index', array_merge($analyticsData, compact('clients', 'services')));
     }
 
+    /**
+     * Get analytics data for AJAX requests
+     */
+    public function getData(Request $request)
+    {
+        return response()->json($this->analyticsService->getAnalyticsData($request));
+    }
+
+    /**
+     * Export analytics data
+     */
+    public function export(Request $request)
+    {
+        $analyticsData = $this->analyticsService->getAnalyticsData($request);
+
+        // For now, return a simple response
+        // TODO: Implement proper export functionality
+        return response()->json([
+            'message' => 'Export functionality will be implemented',
+            'data' => $analyticsData
+        ]);
+    }
 }
