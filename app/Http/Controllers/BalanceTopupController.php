@@ -49,10 +49,11 @@ class BalanceTopupController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        $topups = $query->paginate(20);
+        $perPage = $request->get('per_page', 20);
+        $topups = $query->paginate($perPage);
         $clients = Client::select(['id', 'client_name'])->get();
 
-        return view('balance-topups.index', compact('topups', 'clients'));
+        return view('balance-topups.index', compact('topups', 'clients', 'perPage'));
     }
 
     /**
