@@ -49,40 +49,41 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Service Selection -->
             <div>
-              <x-input
+              <x-select
                 name="service_id"
                 label="Service"
-                type="select"
-                :value="old('service_id', $priceMaster->module_id)"
+                :options="$services->pluck('name', 'id')->toArray()"
+                :selected="old('service_id', $priceMaster->module_id)"
+                placeholder="Select a service"
                 required
                 error="{{ $errors->first('service_id') }}"
-              >
-                <option value="">Select a service</option>
-                @foreach($services as $service)
-                  <option value="{{ $service->id }}" {{ old('service_id', $priceMaster->module_id) == $service->id ? 'selected' : '' }}>
-                    {{ $service->name }}
-                  </option>
-                @endforeach
-              </x-input>
+              />
+            </div>
+
+            <!-- Client Selection -->
+            <div>
+              <x-select
+                name="client_id"
+                label="Client"
+                :options="$clients->pluck('client_name', 'id')->toArray()"
+                :selected="old('client_id', $priceMaster->client_id ?? '')"
+                placeholder="Select a client"
+                required
+                error="{{ $errors->first('client_id') }}"
+              />
             </div>
 
             <!-- Currency Selection -->
             <div>
-              <x-input
+              <x-select
                 name="currency_id"
                 label="Currency"
-                type="select"
-                :value="old('currency_id', $priceMaster->currency_id)"
+                :options="$currencies->pluck('name', 'id')->toArray()"
+                :selected="old('currency_id', $priceMaster->currency_id)"
+                placeholder="Select a currency"
                 required
                 error="{{ $errors->first('currency_id') }}"
-              >
-                <option value="">Select a currency</option>
-                @foreach($currencies as $currency)
-                  <option value="{{ $currency->id }}" {{ old('currency_id', $priceMaster->currency_id) == $currency->id ? 'selected' : '' }}>
-                    {{ $currency->name }}
-                  </option>
-                @endforeach
-              </x-input>
+              />
             </div>
 
             <!-- Price -->
@@ -102,27 +103,24 @@
 
             <!-- Status -->
             <div>
-              <x-input
+              <x-select
                 name="is_active"
                 label="Status"
-                type="select"
-                :value="old('is_active', $priceMaster->is_active)"
+                :options="['1' => 'Active', '0' => 'Inactive']"
+                :selected="old('is_active', $priceMaster->is_active)"
                 required
                 error="{{ $errors->first('is_active') }}"
-              >
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-              </x-input>
+              />
             </div>
 
             <!-- Note -->
             <div class="md:col-span-2">
-              <x-input
+              <x-textarea
                 name="note"
                 label="Note"
-                type="text"
                 :value="old('note', $priceMaster->note)"
                 placeholder="Optional note about this price"
+                rows="3"
                 error="{{ $errors->first('note') }}"
               />
             </div>

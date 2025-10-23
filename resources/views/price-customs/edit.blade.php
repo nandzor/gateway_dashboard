@@ -49,40 +49,28 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Service Selection -->
             <div>
-              <x-input
+              <x-select
                 name="module_id"
                 label="Service"
-                type="select"
-                :value="old('module_id', $priceCustom->module_id)"
+                :options="$services->pluck('name', 'id')->toArray()"
+                :selected="old('module_id', $priceCustom->module_id)"
+                placeholder="Select a service"
                 required
                 error="{{ $errors->first('module_id') }}"
-              >
-                <option value="">Select a service</option>
-                @foreach($services as $service)
-                  <option value="{{ $service->id }}" {{ old('module_id', $priceCustom->module_id) == $service->id ? 'selected' : '' }}>
-                    {{ $service->name }}
-                  </option>
-                @endforeach
-              </x-input>
+              />
             </div>
 
             <!-- Client Selection -->
             <div>
-              <x-input
+              <x-select
                 name="client_id"
                 label="Client"
-                type="select"
-                :value="old('client_id', $priceCustom->client_id)"
+                :options="$clients->pluck('client_name', 'id')->toArray()"
+                :selected="old('client_id', $priceCustom->client_id)"
+                placeholder="Select a client"
                 required
                 error="{{ $errors->first('client_id') }}"
-              >
-                <option value="">Select a client</option>
-                @foreach($clients as $client)
-                  <option value="{{ $client->id }}" {{ old('client_id', $priceCustom->client_id) == $client->id ? 'selected' : '' }}>
-                    {{ $client->client_name }}
-                  </option>
-                @endforeach
-              </x-input>
+              />
             </div>
 
             <!-- Currency Selection -->
@@ -121,17 +109,14 @@
 
             <!-- Status -->
             <div class="md:col-span-2">
-              <x-input
+              <x-select
                 name="is_active"
                 label="Status"
-                type="select"
-                :value="old('is_active', $priceCustom->is_active)"
+                :options="['1' => 'Active', '0' => 'Inactive']"
+                :selected="old('is_active', $priceCustom->is_active)"
                 required
                 error="{{ $errors->first('is_active') }}"
-              >
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-              </x-input>
+              />
             </div>
           </div>
 

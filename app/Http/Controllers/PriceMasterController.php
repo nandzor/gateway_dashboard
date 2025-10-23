@@ -59,9 +59,10 @@ class PriceMasterController extends Controller
     public function create()
     {
         $services = $this->priceMasterService->getServices();
+        $clients = $this->priceMasterService->getClients();
         $currencies = $this->priceMasterService->getCurrencies();
 
-        return view('price-masters.create', compact('services', 'currencies'));
+        return view('price-masters.create', compact('services', 'clients', 'currencies'));
     }
 
     /**
@@ -101,9 +102,10 @@ class PriceMasterController extends Controller
     public function edit(PriceMaster $priceMaster)
     {
         $services = $this->priceMasterService->getServices();
+        $clients = $this->priceMasterService->getClients();
         $currencies = $this->priceMasterService->getCurrencies();
 
-        return view('price-masters.edit', compact('priceMaster', 'services', 'currencies'));
+        return view('price-masters.edit', compact('priceMaster', 'services', 'clients', 'currencies'));
     }
 
     /**

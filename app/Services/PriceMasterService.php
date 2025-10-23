@@ -105,6 +105,17 @@ class PriceMasterService extends BaseService
     }
 
     /**
+     * Get all clients for dropdown
+     */
+    public function getClients(): Collection
+    {
+        return \App\Models\Client::select('id', 'client_name')
+            ->where('is_active', true)
+            ->orderBy('client_name')
+            ->get();
+    }
+
+    /**
      * Get price master statistics
      */
     public function getPriceMasterStats(): array
