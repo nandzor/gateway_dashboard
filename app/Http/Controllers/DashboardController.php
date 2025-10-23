@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Service;
 use App\Models\Client;
 use App\Models\Balance;
+use App\Models\History;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -231,10 +233,108 @@ class DashboardController extends Controller
         $totalTransactions = Balance::count();
         $avgTransactionValue = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;
 
+        // Get 7-day histories data for charts
+        $historiesData = $this->getHistoriesChartData();
+
         return [
             'totalRevenue' => $totalRevenue,
             'totalTransactions' => $totalTransactions,
             'avgTransactionValue' => $avgTransactionValue,
+            'historiesChartData' => $historiesData,
+        ];
+    }
+
+    /**
+     * Get 7-day histories data for charts
+     */
+    private function getHistoriesChartData(): array
+    {
+        $endDate = Carbon::now();
+        $startDate = $endDate->copy()->subDays(6);
+
+        // Get daily transaction counts
+        $dailyTransactions = History::selectRaw('DATE(trx_date) as date, COUNT(*) as count')
+            ->whereBetween('trx_date', [$startDate, $endDate])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
+
+        // Get daily revenue
+        $dailyRevenue = History::selectRaw('DATE(trx_date) as date, SUM(price) as revenue')
+            ->whereBetween('trx_date', [$startDate, $endDate])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
+
+        // Get daily success rate
+        $dailySuccess = History::selectRaw('DATE(trx_date) as date,
+            SUM(CASE WHEN status = \'OK\' THEN 1 ELSE 0 END) as success_count,
+            COUNT(*) as total_count')
+            ->whereBetween('trx_date', [$startDate, $endDate])
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->keyBy('date');
+
+        // Get top services for the period
+        $topServices = History::with('service:id,name')
+            ->selectRaw('module_id, COUNT(*) as usage_count, SUM(price) as revenue')
+            ->whereBetween('trx_date', [$startDate, $endDate])
+            ->groupBy('module_id')
+            ->orderBy('usage_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Get top clients for the period
+        $topClients = History::with('client:id,client_name')
+            ->selectRaw('client_id, COUNT(*) as transaction_count, SUM(price) as revenue')
+            ->whereBetween('trx_date', [$startDate, $endDate])
+            ->groupBy('client_id')
+            ->orderBy('transaction_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Prepare chart data
+        $chartLabels = [];
+        $chartTransactionData = [];
+        $chartRevenueData = [];
+        $chartSuccessRateData = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $date = $startDate->copy()->addDays($i);
+            $dateString = $date->format('Y-m-d');
+            $chartLabels[] = $date->format('M d');
+
+            $chartTransactionData[] = $dailyTransactions->get($dateString, (object)['count' => 0])->count;
+            $chartRevenueData[] = $dailyRevenue->get($dateString, (object)['revenue' => 0])->revenue;
+
+            $successData = $dailySuccess->get($dateString, (object)['success_count' => 0, 'total_count' => 0]);
+            $successRate = $successData->total_count > 0 ? ($successData->success_count / $successData->total_count) * 100 : 0;
+            $chartSuccessRateData[] = round($successRate, 1);
+        }
+
+        // Calculate period statistics
+        $totalPeriodTransactions = $dailyTransactions->sum('count');
+        $totalPeriodRevenue = $dailyRevenue->sum('revenue');
+        $avgDailyTransactions = $totalPeriodTransactions / 7;
+        $avgDailyRevenue = $totalPeriodRevenue / 7;
+
+        return [
+            'labels' => $chartLabels,
+            'transactions' => $chartTransactionData,
+            'revenue' => $chartRevenueData,
+            'successRate' => $chartSuccessRateData,
+            'topServices' => $topServices,
+            'topClients' => $topClients,
+            'statistics' => [
+                'totalTransactions' => $totalPeriodTransactions,
+                'totalRevenue' => $totalPeriodRevenue,
+                'avgDailyTransactions' => round($avgDailyTransactions, 1),
+                'avgDailyRevenue' => round($avgDailyRevenue, 2),
+                'period' => $startDate->format('M d') . ' - ' . $endDate->format('M d'),
+            ],
         ];
     }
 }
