@@ -47,6 +47,38 @@ class PriceMaster extends Model
     }
 
     /**
+     * Scope for inactive price masters
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('is_active', false);
+    }
+
+    /**
+     * Check if price master is active
+     */
+    public function isActive(): bool
+    {
+        return $this->is_active === true;
+    }
+
+    /**
+     * Soft delete price master by setting is_active to false
+     */
+    public function softDelete(): bool
+    {
+        return $this->update(['is_active' => false]);
+    }
+
+    /**
+     * Restore soft deleted price master by setting is_active to true
+     */
+    public function restore(): bool
+    {
+        return $this->update(['is_active' => true]);
+    }
+
+    /**
      * Get formatted price with currency symbol
      */
     public function getFormattedPriceAttribute()

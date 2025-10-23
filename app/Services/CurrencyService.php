@@ -64,11 +64,19 @@ class CurrencyService extends BaseService
     }
 
     /**
-     * Delete a currency
+     * Delete a currency (soft delete)
      */
     public function deleteCurrency(Currency $currency): bool
     {
-        return $this->delete($currency);
+        return $currency->softDelete();
+    }
+
+    /**
+     * Restore a soft deleted currency
+     */
+    public function restoreCurrency(Currency $currency): bool
+    {
+        return $currency->restore();
     }
 
     /**

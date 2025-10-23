@@ -145,7 +145,7 @@ class PriceCustomController extends Controller
 
             return redirect()
                 ->route('price-customs.index')
-                ->with('success', 'Price custom deleted successfully.');
+                ->with('success', 'Price custom deactivated successfully.');
         } catch (\Exception $e) {
             return redirect()
                 ->back()

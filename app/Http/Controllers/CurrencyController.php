@@ -124,7 +124,7 @@ class CurrencyController extends Controller
 
             return redirect()
                 ->route('currencies.index')
-                ->with('success', 'Currency deleted successfully.');
+                ->with('success', 'Currency deactivated successfully.');
         } catch (\Exception $e) {
             return redirect()
                 ->back()

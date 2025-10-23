@@ -45,6 +45,38 @@ class Currency extends Model
     }
 
     /**
+     * Scope for inactive currencies
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('is_active', false);
+    }
+
+    /**
+     * Check if currency is active
+     */
+    public function isActive(): bool
+    {
+        return $this->is_active === true;
+    }
+
+    /**
+     * Soft delete currency by setting is_active to false
+     */
+    public function softDelete(): bool
+    {
+        return $this->update(['is_active' => false]);
+    }
+
+    /**
+     * Restore soft deleted currency by setting is_active to true
+     */
+    public function restore(): bool
+    {
+        return $this->update(['is_active' => true]);
+    }
+
+    /**
      * Get formatted created at date
      */
     public function getFormattedCreatedAtAttribute()

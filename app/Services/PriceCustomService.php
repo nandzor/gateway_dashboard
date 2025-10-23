@@ -72,7 +72,15 @@ class PriceCustomService extends BaseService
      */
     public function deletePriceCustom(PriceCustom $priceCustom): bool
     {
-        return $this->delete($priceCustom);
+        return $priceCustom->softDelete();
+    }
+
+    /**
+     * Restore a soft deleted price custom
+     */
+    public function restorePriceCustom(PriceCustom $priceCustom): bool
+    {
+        return $priceCustom->restore();
     }
 
     /**

@@ -138,7 +138,7 @@ class PriceMasterController extends Controller
 
             return redirect()
                 ->route('price-masters.index')
-                ->with('success', 'Price master deleted successfully.');
+                ->with('success', 'Price master deactivated successfully.');
         } catch (\Exception $e) {
             return redirect()
                 ->back()

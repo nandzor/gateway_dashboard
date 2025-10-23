@@ -71,7 +71,15 @@ class PriceMasterService extends BaseService
      */
     public function deletePriceMaster(PriceMaster $priceMaster): bool
     {
-        return $this->delete($priceMaster);
+        return $priceMaster->softDelete();
+    }
+
+    /**
+     * Restore a soft deleted price master
+     */
+    public function restorePriceMaster(PriceMaster $priceMaster): bool
+    {
+        return $priceMaster->restore();
     }
 
     /**
