@@ -27,17 +27,20 @@ class PriceCustomController extends Controller
         $serviceId = $request->get('service_id');
         $clientId = $request->get('client_id');
         $currencyId = $request->get('currency_id');
+        $status = $request->get('status');
 
         $filters = [];
         if ($serviceId) $filters['module_id'] = $serviceId;
         if ($clientId) $filters['client_id'] = $clientId;
         if ($currencyId) $filters['currency_id'] = $currencyId;
+        if ($status) $filters['is_active'] = $status;
 
         $priceCustoms = $this->priceCustomService->getAllPriceCustoms($search, $perPage, $filters);
         $stats = $this->priceCustomService->getPriceCustomStats();
         $services = $this->priceCustomService->getServices();
         $clients = $this->priceCustomService->getClients();
         $currencies = $this->priceCustomService->getCurrencies();
+        $perPageOptions = $this->priceCustomService->getPerPageOptions();
 
         return view('price-customs.index', compact(
             'priceCustoms',
@@ -47,9 +50,11 @@ class PriceCustomController extends Controller
             'serviceId',
             'clientId',
             'currencyId',
+            'status',
             'services',
             'clients',
-            'currencies'
+            'currencies',
+            'perPageOptions'
         ));
     }
 

@@ -20,7 +20,18 @@ class UserController extends Controller {
     public function index(Request $request) {
         $perPage = $request->get('per_page', 10);
         $search = $request->get('search');
+        $role = $request->get('role');
+        $status = $request->get('status');
         $showInactive = $request->get('show_inactive', false);
+
+        // Build filters array
+        $filters = [];
+        if ($role) {
+            $filters['role'] = $role;
+        }
+        if ($status) {
+            $filters['is_active'] = $status;
+        }
 
         // Show all users including inactive if requested
         if ($showInactive) {
@@ -32,7 +43,7 @@ class UserController extends Controller {
 
         $perPageOptions = $this->userService->getPerPageOptions();
 
-        return view('users.index', compact('users', 'perPageOptions', 'search', 'perPage', 'showInactive'));
+        return view('users.index', compact('users', 'perPageOptions', 'search', 'perPage', 'role', 'status', 'showInactive'));
     }
 
     /**

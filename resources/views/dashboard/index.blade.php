@@ -50,15 +50,15 @@
         <div class="space-y-4">
           <div class="flex justify-between items-center">
             <span class="text-gray-600">Total Revenue:</span>
-            <span class="text-2xl font-bold text-green-600">@formatCurrency($totalRevenue)</span>
+            <span class="text-2xl font-bold text-green-600">{{ App\Helpers\NumberHelper::formatCurrency($totalRevenue) }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-600">Average Transaction:</span>
-            <span class="text-xl font-semibold text-green-500">@formatCurrency($avgTransactionValue)</span>
+            <span class="text-xl font-semibold text-green-500">{{ App\Helpers\NumberHelper::formatCurrency($avgTransactionValue) }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-600">Total Transactions:</span>
-            <span class="text-xl font-semibold text-gray-700">@formatNumber($totalTransactions)</span>
+            <span class="text-xl font-semibold text-gray-700">{{ App\Helpers\NumberHelper::formatNumber($totalTransactions) }}</span>
           </div>
         </div>
       </x-card>
@@ -68,19 +68,19 @@
         <div class="space-y-4">
           <div class="flex justify-between items-center">
             <span class="text-gray-600">Active Users:</span>
-            <span class="text-2xl font-bold text-blue-600">@formatNumber($activeUsers)</span>
+            <span class="text-2xl font-bold text-blue-600">{{ App\Helpers\NumberHelper::formatNumber($activeUsers) }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-600">Active Clients:</span>
-            <span class="text-xl font-semibold text-purple-500">@formatNumber($activeClients)</span>
+            <span class="text-xl font-semibold text-purple-500">{{ App\Helpers\NumberHelper::formatNumber($activeClients) }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-600">Production Clients:</span>
-            <span class="text-xl font-semibold text-green-600">@formatNumber($productionClients)</span>
+            <span class="text-xl font-semibold text-green-600">{{ App\Helpers\NumberHelper::formatNumber($productionClients) }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-600">Staging Clients:</span>
-            <span class="text-xl font-semibold text-yellow-600">@formatNumber($stagingClients)</span>
+            <span class="text-xl font-semibold text-yellow-600">{{ App\Helpers\NumberHelper::formatNumber($stagingClients) }}</span>
           </div>
         </div>
       </x-card>

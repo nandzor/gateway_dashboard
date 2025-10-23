@@ -24,20 +24,24 @@ class CurrencyController extends Controller
     {
         $perPage = $request->get('per_page', 15);
         $search = $request->get('search');
+        $status = $request->get('status');
 
         $filters = [];
-        if ($request->has('is_active')) {
-            $filters['is_active'] = $request->get('is_active');
+        if ($status) {
+            $filters['is_active'] = $status;
         }
 
         $currencies = $this->currencyService->getAllCurrencies($search, $perPage, $filters);
         $stats = $this->currencyService->getCurrencyStats();
+        $perPageOptions = $this->currencyService->getPerPageOptions();
 
         return view('currencies.index', compact(
             'currencies',
             'stats',
             'search',
-            'perPage'
+            'perPage',
+            'status',
+            'perPageOptions'
         ));
     }
 

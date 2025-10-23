@@ -88,6 +88,12 @@ class ReportsService extends BaseService
         $uniqueUsers = $histories->unique('user_id')->count();
         $uniqueClients = $histories->unique('client_id')->count();
 
+        // Additional performance metrics
+        $avgTransactionValue = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;
+        $successTransactions = $histories->where('status', 'success')->count();
+        $successRate = $totalTransactions > 0 ? ($successTransactions / $totalTransactions) * 100 : 0;
+        $avgDurationPerTransaction = $totalTransactions > 0 ? $totalDuration / $totalTransactions : 0;
+
         // Transaction types breakdown
         $transactionTypes = $histories->groupBy('trx_type')->map(function ($group) {
             return [
@@ -164,19 +170,42 @@ class ReportsService extends BaseService
             ];
         });
 
+        // Daily summary data
+        $peakHour = $hourlyTrends->sortByDesc('count')->first()['hour'] ?? null;
+        $peakHourFormatted = $peakHour ? Carbon::parse($peakHour)->format('H:i') : 'N/A';
+
+        $busiestService = $topServices->first()['service_name'] ?? 'N/A';
+        $topClient = $topClients->first()['client_name'] ?? 'N/A';
+
+        // Format data for Chart.js
+        $hourlyTrendsFormatted = $hourlyTrends->map(function($data, $hour) {
+            return [
+                'hour' => $hour . ':00',
+                'count' => $data['count'],
+                'revenue' => $data['revenue'] ?? 0
+            ];
+        })->values();
+
         return [
             'totalTransactions' => $totalTransactions,
             'totalRevenue' => $totalRevenue,
             'totalDuration' => $totalDuration,
             'uniqueUsers' => $uniqueUsers,
             'uniqueClients' => $uniqueClients,
+            'avgTransactionValue' => $avgTransactionValue,
+            'successRate' => $successRate,
+            'avgDurationPerTransaction' => $avgDurationPerTransaction,
             'transactionTypes' => $transactionTypes,
             'clientTypes' => $clientTypes,
             'topClients' => $topClients,
             'topServices' => $topServices,
             'hourlyTrends' => $hourlyTrends,
+            'hourlyTrendsFormatted' => $hourlyTrendsFormatted,
             'statusBreakdown' => $statusBreakdown,
             'chargeBreakdown' => $chargeBreakdown,
+            'peakHour' => $peakHourFormatted,
+            'busiestService' => $busiestService,
+            'topClient' => $topClient,
             'date' => $date,
             'clientId' => $clientId,
             'serviceId' => $serviceId,
@@ -310,6 +339,23 @@ class ReportsService extends BaseService
         $avgRevenuePerDay = $totalRevenue / max($startDate->diffInDays($endDate) + 1, 1);
         $avgDurationPerDay = $totalDuration / max($startDate->diffInDays($endDate) + 1, 1);
 
+        // Format data for Chart.js
+        $dailyTrendsFormatted = $dailyTrends->map(function($data, $date) {
+            return [
+                'date' => Carbon::parse($date)->format('d M'),
+                'count' => $data['count'],
+                'revenue' => $data['revenue'] ?? 0
+            ];
+        })->values();
+
+        $weeklyTrendsFormatted = $weeklyTrends->map(function($data, $week) {
+            return [
+                'week' => 'Minggu ' . $week,
+                'count' => $data['count'],
+                'revenue' => $data['revenue'] ?? 0
+            ];
+        })->values();
+
         return [
             'totalTransactions' => $totalTransactions,
             'totalRevenue' => $totalRevenue,
@@ -322,6 +368,8 @@ class ReportsService extends BaseService
             'topServices' => $topServices,
             'dailyTrends' => $dailyTrends,
             'weeklyTrends' => $weeklyTrends,
+            'dailyTrendsFormatted' => $dailyTrendsFormatted,
+            'weeklyTrendsFormatted' => $weeklyTrendsFormatted,
             'statusBreakdown' => $statusBreakdown,
             'chargeBreakdown' => $chargeBreakdown,
             'avgTransactionsPerDay' => $avgTransactionsPerDay,

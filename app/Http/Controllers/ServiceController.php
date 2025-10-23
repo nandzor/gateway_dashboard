@@ -24,6 +24,17 @@ class ServiceController extends Controller
     {
         $perPage = $request->get('per_page', 15);
         $search = $request->get('search');
+        $type = $request->get('type');
+        $status = $request->get('status');
+
+        // Build filters array
+        $filters = [];
+        if ($type) {
+            $filters['type'] = $type;
+        }
+        if ($status) {
+            $filters['is_active'] = $status;
+        }
 
         if ($search) {
             $services = $this->serviceService->searchServices($search, $perPage);
@@ -33,7 +44,7 @@ class ServiceController extends Controller
 
         $stats = $this->serviceService->getServiceStats();
 
-        return view('services.index', compact('services', 'stats', 'search'));
+        return view('services.index', compact('services', 'stats', 'search', 'perPage', 'type', 'status'));
     }
 
     /**

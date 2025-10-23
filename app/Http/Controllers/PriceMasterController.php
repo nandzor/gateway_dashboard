@@ -26,15 +26,18 @@ class PriceMasterController extends Controller
         $search = $request->get('search');
         $serviceId = $request->get('service_id');
         $currencyId = $request->get('currency_id');
+        $status = $request->get('status');
 
         $filters = [];
         if ($serviceId) $filters['module_id'] = $serviceId;
         if ($currencyId) $filters['currency_id'] = $currencyId;
+        if ($status) $filters['is_active'] = $status;
 
         $priceMasters = $this->priceMasterService->getAllPriceMasters($search, $perPage, $filters);
         $stats = $this->priceMasterService->getPriceMasterStats();
         $services = $this->priceMasterService->getServices();
         $currencies = $this->priceMasterService->getCurrencies();
+        $perPageOptions = $this->priceMasterService->getPerPageOptions();
 
         return view('price-masters.index', compact(
             'priceMasters',
@@ -43,8 +46,10 @@ class PriceMasterController extends Controller
             'perPage',
             'serviceId',
             'currencyId',
+            'status',
             'services',
-            'currencies'
+            'currencies',
+            'perPageOptions'
         ));
     }
 

@@ -42,17 +42,20 @@ class HistoryController extends Controller
         $perPage = $request->get('per_page', 15);
         $clientId = $request->get('client_id');
         $serviceId = $request->get('service_id');
+        $status = $request->get('status');
 
         // Build query filters
         $queryFilters = [];
         if ($clientId) $queryFilters['client_id'] = $clientId;
         if ($serviceId) $queryFilters['module_id'] = $serviceId;
+        if ($status) $queryFilters['status'] = $status;
 
         return [
             'search' => $search,
             'per_page' => $perPage,
             'client_id' => $clientId,
             'service_id' => $serviceId,
+            'status' => $status,
             'query_filters' => $queryFilters
         ];
     }

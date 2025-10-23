@@ -23,6 +23,7 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ApiCredentialController;
 use App\Http\Controllers\BranchEventSettingController;
 use App\Http\Controllers\WhatsAppSettingsController;
+use App\Http\Controllers\BalanceTopupController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes
@@ -69,11 +70,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/monthly/export', [ReportsController::class, 'exportMonthly'])->name('monthly.export');
     });
 
-    // Analytics
-    Route::prefix('analytics')->name('analytics.')->group(function () {
-        Route::get('/', [AnalyticsController::class, 'index'])->name('index');
-        Route::get('/data', [AnalyticsController::class, 'getData'])->name('data');
-        Route::get('/export', [AnalyticsController::class, 'export'])->name('export');
-    });
+           // Analytics
+           Route::prefix('analytics')->name('analytics.')->group(function () {
+               Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+               Route::get('/data', [AnalyticsController::class, 'getData'])->name('data');
+               Route::get('/export', [AnalyticsController::class, 'export'])->name('export');
+           });
 
-});
+           // Balance Topups
+           Route::resource('balance-topups', BalanceTopupController::class);
+           Route::post('/balance-topups/{balanceTopup}/approve', [BalanceTopupController::class, 'approve'])->name('balance-topups.approve');
+           Route::post('/balance-topups/{balanceTopup}/reject', [BalanceTopupController::class, 'reject'])->name('balance-topups.reject');
+           Route::post('/balance-topups/{balanceTopup}/cancel', [BalanceTopupController::class, 'cancel'])->name('balance-topups.cancel');
+
+       });

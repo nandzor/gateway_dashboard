@@ -62,22 +62,20 @@
                     <!-- Filter Fields -->
                     <div class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <x-input type="month" name="month" label="Pilih Bulan" :value="$month" />
-                        <x-input type="select" name="client_id" label="Klien" :value="$clientId">
-                            <option value="">Semua Klien</option>
-                            @foreach ($clients as $client)
-                                <option value="{{ $client->id }}" {{ $clientId == $client->id ? 'selected' : '' }}>
-                                    {{ $client->client_name }}
-                                </option>
-                            @endforeach
-                        </x-input>
-                        <x-input type="select" name="service_id" label="Layanan" :value="$serviceId">
-                            <option value="">Semua Layanan</option>
-                            @foreach ($services as $service)
-                                <option value="{{ $service->id }}" {{ $serviceId == $service->id ? 'selected' : '' }}>
-                                    {{ $service->name }}
-                                </option>
-                            @endforeach
-                        </x-input>
+                        <x-select
+                            name="client_id"
+                            label="Klien"
+                            :selected="$clientId"
+                            :options="$clients->pluck('client_name', 'id')->prepend('Semua Klien', '')"
+                            placeholder="Pilih Klien"
+                        />
+                        <x-select
+                            name="service_id"
+                            label="Layanan"
+                            :selected="$serviceId"
+                            :options="$services->pluck('name', 'id')->prepend('Semua Layanan', '')"
+                            placeholder="Pilih Layanan"
+                        />
                     </div>
 
                     <!-- Action Button -->
@@ -96,7 +94,7 @@
             <!-- Total Transactions -->
             <x-stat-card
                 title="Total Transaksi"
-                :value="@formatNumber($totalTransactions)"
+                :value="App\Helpers\NumberHelper::formatNumber($totalTransactions)"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' />"
                 color="blue"
             />
@@ -104,7 +102,7 @@
             <!-- Total Revenue -->
             <x-stat-card
                 title="Total Pendapatan"
-                :value="@formatCurrency($totalRevenue)"
+                :value="App\Helpers\NumberHelper::formatCurrency($totalRevenue)"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />"
                 color="green"
             />
@@ -112,7 +110,7 @@
             <!-- Total Duration -->
             <x-stat-card
                 title="Total Durasi"
-                :value="@formatNumber($totalDuration) . ' detik'"
+                :value="App\Helpers\NumberHelper::formatNumber($totalDuration) . ' detik'"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />"
                 color="purple"
             />
@@ -120,7 +118,7 @@
             <!-- Unique Users -->
             <x-stat-card
                 title="Pengguna Unik"
-                :value="@formatNumber($uniqueUsers)"
+                :value="App\Helpers\NumberHelper::formatNumber($uniqueUsers)"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' />"
                 color="orange"
             />
@@ -128,7 +126,7 @@
             <!-- Unique Clients -->
             <x-stat-card
                 title="Klien Unik"
-                :value="@formatNumber($uniqueClients)"
+                :value="App\Helpers\NumberHelper::formatNumber($uniqueClients)"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' />"
                 color="indigo"
             />
@@ -139,7 +137,7 @@
             <!-- Average Transactions Per Day -->
             <x-stat-card
                 title="Rata-rata Transaksi/Hari"
-                :value="@formatNumber($avgTransactionsPerDay, 1)"
+                :value="App\Helpers\NumberHelper::formatNumber($avgTransactionsPerDay, 1)"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' />"
                 color="teal"
             />
@@ -147,7 +145,7 @@
             <!-- Average Revenue Per Day -->
             <x-stat-card
                 title="Rata-rata Pendapatan/Hari"
-                :value="@formatCurrency($avgRevenuePerDay)"
+                :value="App\Helpers\NumberHelper::formatCurrency($avgRevenuePerDay)"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />"
                 color="cyan"
             />
@@ -155,7 +153,7 @@
             <!-- Average Duration Per Day -->
             <x-stat-card
                 title="Rata-rata Durasi/Hari"
-                :value="@formatNumber($avgDurationPerDay, 1) . ' detik'"
+                :value="App\Helpers\NumberHelper::formatNumber($avgDurationPerDay, 1) . ' detik'"
                 icon="<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />"
                 color="pink"
             />
@@ -164,13 +162,14 @@
         <!-- Daily Trends Chart -->
         <x-card title="Tren Harian" class="mb-8">
             @if ($dailyTrends->count() > 0)
-                <div class="h-64 flex items-end space-x-2 p-6">
-                    @foreach ($dailyTrends as $date => $data)
-                        <div class="flex-1 flex flex-col items-center">
-                            <div class="w-full bg-blue-200 rounded-t" style="height: {{ ($data['count'] / $dailyTrends->max('count')) * 200 }}px"></div>
-                            <span class="text-xs text-gray-500 mt-2">{{ \Carbon\Carbon::parse($date)->format('d M') }}</span>
-                        </div>
-                    @endforeach
+                <div class="p-6">
+                    <div style="height: 400px;">
+                        <canvas id="dailyTrendsChart"></canvas>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                        <span>Hari dengan transaksi terbanyak: {{ $dailyTrends->sortByDesc('count')->first()['date'] ?? 'N/A' }}</span>
+                        <span>Total: {{ App\Helpers\NumberHelper::formatNumber($dailyTrends->sum('count')) }} transaksi</span>
+                    </div>
                 </div>
             @else
                 <x-empty-state message="Tidak ada data tren harian" icon="inbox" />
@@ -180,13 +179,14 @@
         <!-- Weekly Trends Chart -->
         <x-card title="Tren Mingguan" class="mb-8">
             @if ($weeklyTrends->count() > 0)
-                <div class="h-64 flex items-end space-x-2 p-6">
-                    @foreach ($weeklyTrends as $week => $data)
-                        <div class="flex-1 flex flex-col items-center">
-                            <div class="w-full bg-green-200 rounded-t" style="height: {{ ($data['count'] / $weeklyTrends->max('count')) * 200 }}px"></div>
-                            <span class="text-xs text-gray-500 mt-2">Minggu {{ $week }}</span>
-                        </div>
-                    @endforeach
+                <div class="p-6">
+                    <div style="height: 400px;">
+                        <canvas id="weeklyTrendsChart"></canvas>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                        <span>Minggu dengan transaksi terbanyak: Minggu {{ $weeklyTrends->sortByDesc('count')->first()['week'] ?? 'N/A' }}</span>
+                        <span>Total: {{ App\Helpers\NumberHelper::formatNumber($weeklyTrends->sum('count')) }} transaksi</span>
+                    </div>
                 </div>
             @else
                 <x-empty-state message="Tidak ada data tren mingguan" icon="inbox" />
@@ -204,7 +204,7 @@
                                 <div class="flex-1">
                                     <div class="flex items-center justify-between mb-1">
                                         <span class="text-sm font-medium text-gray-700">{{ $type }}</span>
-                                        <span class="text-sm text-gray-500">@formatNumber($data['count'])</span>
+                                        <span class="text-sm text-gray-500">{{ App\Helpers\NumberHelper::formatNumber($data['count']) }}</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
                                         <div class="bg-blue-600 h-2 rounded-full" style="width: {{ ($data['count'] / $transactionTypes->max('count')) * 100 }}%"></div>
@@ -227,7 +227,7 @@
                                 <div class="flex-1">
                                     <div class="flex items-center justify-between mb-1">
                                         <span class="text-sm font-medium text-gray-700">{{ $type }}</span>
-                                        <span class="text-sm text-gray-500">@formatNumber($data['count'])</span>
+                                        <span class="text-sm text-gray-500">{{ App\Helpers\NumberHelper::formatNumber($data['count']) }}</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
                                         <div class="bg-green-600 h-2 rounded-full" style="width: {{ ($data['count'] / $clientTypes->max('count')) * 100 }}%"></div>
@@ -255,8 +255,8 @@
                                     <p class="text-xs text-gray-500">{{ $client['client_type'] }}</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-sm font-semibold text-gray-900">@formatCurrency($client['total_revenue'])</p>
-                                    <p class="text-xs text-gray-500">@formatNumber($client['transaction_count']) transaksi</p>
+                                    <p class="text-sm font-semibold text-gray-900">{{ App\Helpers\NumberHelper::formatCurrency($client['total_revenue']) }}</p>
+                                    <p class="text-xs text-gray-500">{{ App\Helpers\NumberHelper::formatNumber($client['transaction_count']) }} transaksi</p>
                                 </div>
                             </div>
                         @endforeach
@@ -277,8 +277,8 @@
                                     <p class="text-xs text-gray-500">ID Layanan: {{ $service['service_id'] }}</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-sm font-semibold text-gray-900">@formatNumber($service['usage_count'])</p>
-                                    <p class="text-xs text-gray-500">@formatCurrency($service['total_revenue'])</p>
+                                    <p class="text-sm font-semibold text-gray-900">{{ App\Helpers\NumberHelper::formatNumber($service['usage_count']) }}</p>
+                                    <p class="text-xs text-gray-500">{{ App\Helpers\NumberHelper::formatCurrency($service['total_revenue']) }}</p>
                                 </div>
                             </div>
                         @endforeach
@@ -309,7 +309,7 @@
                                             @endif
                                             <span class="text-sm font-medium text-gray-700">{{ $status }}</span>
                                         </div>
-                                        <span class="text-sm text-gray-500">@formatNumber($data['count'])</span>
+                                        <span class="text-sm text-gray-500">{{ App\Helpers\NumberHelper::formatNumber($data['count']) }}</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
                                         <div class="bg-purple-600 h-2 rounded-full" style="width: {{ ($data['count'] / $statusBreakdown->max('count')) * 100 }}%"></div>
@@ -339,7 +339,7 @@
                                             @endif
                                             <span class="text-sm font-medium text-gray-700">{{ $charge }}</span>
                                         </div>
-                                        <span class="text-sm text-gray-500">@formatNumber($data['count'])</span>
+                                        <span class="text-sm text-gray-500">{{ App\Helpers\NumberHelper::formatNumber($data['count']) }}</span>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-2">
                                         <div class="bg-orange-600 h-2 rounded-full" style="width: {{ ($data['count'] / $chargeBreakdown->max('count')) * 100 }}%"></div>
@@ -355,4 +355,273 @@
         </div>
     </div>
 </div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Daily Trends Chart
+    @if ($dailyTrends->count() > 0)
+    const dailyCtx = document.getElementById('dailyTrendsChart').getContext('2d');
+    const dailyData = @json($dailyTrendsFormatted);
+
+    new Chart(dailyCtx, {
+        type: 'line',
+        data: {
+            labels: dailyData.map(item => item.date),
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: dailyData.map(item => item.count),
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgb(59, 130, 246)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }, {
+                label: 'Pendapatan (x1000)',
+                data: dailyData.map(item => Math.round(item.revenue / 1000)),
+                borderColor: 'rgb(34, 197, 94)',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: 'rgb(34, 197, 94)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Tren Transaksi Harian',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    color: '#374151'
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: true
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Tanggal',
+                        color: '#6B7280',
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Jumlah Transaksi',
+                        color: '#6B7280',
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Pendapatan (x1000)',
+                        color: '#6B7280',
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        drawOnChartArea: false,
+                    },
+                }
+            }
+        }
+    });
+    @endif
+
+    // Weekly Trends Chart
+    @if ($weeklyTrends->count() > 0)
+    const weeklyCtx = document.getElementById('weeklyTrendsChart').getContext('2d');
+    const weeklyData = @json($weeklyTrendsFormatted);
+
+    new Chart(weeklyCtx, {
+        type: 'bar',
+        data: {
+            labels: weeklyData.map(item => item.week),
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: weeklyData.map(item => item.count),
+                backgroundColor: [
+                    'rgba(99, 102, 241, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(251, 146, 60, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(236, 72, 153, 0.8)',
+                    'rgba(14, 165, 233, 0.8)'
+                ],
+                borderColor: [
+                    'rgb(99, 102, 241)',
+                    'rgb(34, 197, 94)',
+                    'rgb(251, 146, 60)',
+                    'rgb(239, 68, 68)',
+                    'rgb(168, 85, 247)',
+                    'rgb(236, 72, 153)',
+                    'rgb(14, 165, 233)'
+                ],
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }, {
+                label: 'Pendapatan (x1000)',
+                data: weeklyData.map(item => Math.round(item.revenue / 1000)),
+                type: 'line',
+                borderColor: 'rgb(239, 68, 68)',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderWidth: 3,
+                fill: false,
+                tension: 0.4,
+                pointBackgroundColor: 'rgb(239, 68, 68)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                yAxisID: 'y1'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Tren Transaksi Mingguan',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    color: '#374151'
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(255, 255, 255, 0.1)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: true
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Minggu',
+                        color: '#6B7280',
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Jumlah Transaksi',
+                        color: '#6B7280',
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Pendapatan (x1000)',
+                        color: '#6B7280',
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        drawOnChartArea: false,
+                    },
+                }
+            }
+        }
+    });
+    @endif
+});
+</script>
 @endsection

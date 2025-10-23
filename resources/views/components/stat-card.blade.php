@@ -15,6 +15,12 @@ $colors = [
   'orange' => 'from-orange-500 to-orange-600',
   'red' => 'from-red-500 to-red-600',
   'indigo' => 'from-indigo-500 to-indigo-600',
+  'teal' => 'from-teal-500 to-teal-600',
+  'yellow' => 'from-yellow-500 to-yellow-600',
+  'pink' => 'from-pink-500 to-pink-600',
+  'gray' => 'from-gray-500 to-gray-600',
+  'cyan' => 'from-cyan-500 to-cyan-600',
+  'warning' => 'from-yellow-500 to-yellow-600',
 ];
 
 $iconBg = [
@@ -24,7 +30,16 @@ $iconBg = [
   'orange' => 'bg-orange-100',
   'red' => 'bg-red-100',
   'indigo' => 'bg-indigo-100',
+  'teal' => 'bg-teal-100',
+  'yellow' => 'bg-yellow-100',
+  'pink' => 'bg-pink-100',
+  'gray' => 'bg-gray-100',
+  'cyan' => 'bg-cyan-100',
+  'warning' => 'bg-yellow-100',
 ];
+
+// Fallback to blue if color is not defined
+$color = isset($colors[$color]) ? $color : 'blue';
 @endphp
 
 <div class="relative overflow-hidden bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
