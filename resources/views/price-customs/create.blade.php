@@ -74,21 +74,15 @@
 
             <!-- Currency Selection -->
             <div>
-              <x-input
+              <x-select
                 name="currency_id"
                 label="Currency"
-                type="select"
-                :value="old('currency_id')"
+                :options="$currencies->pluck('name', 'id')->toArray()"
+                :selected="old('currency_id')"
+                placeholder="Select a currency"
                 required
                 error="{{ $errors->first('currency_id') }}"
-              >
-                <option value="">Select a currency</option>
-                @foreach($currencies as $currency)
-                  <option value="{{ $currency->id }}" {{ old('currency_id') == $currency->id ? 'selected' : '' }}>
-                    {{ $currency->name }}
-                  </option>
-                @endforeach
-              </x-input>
+              />
             </div>
 
             <!-- Price -->
