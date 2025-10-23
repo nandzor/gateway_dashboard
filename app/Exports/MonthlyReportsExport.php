@@ -14,10 +14,10 @@ class MonthlyReportsExport implements FromCollection, WithHeadings, WithMapping,
     protected $data;
     protected $month;
 
-    public function __construct($data, $month)
+    public function __construct($data)
     {
         $this->data = $data;
-        $this->month = $month;
+        $this->month = $data['month'] ?? now()->format('Y-m');
     }
 
     public function collection()
@@ -189,12 +189,11 @@ class MonthlyReportsExport implements FromCollection, WithHeadings, WithMapping,
     {
         return [
             1 => [
-                'font' => ['bold' => true, 'size' => 12],
+                'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '4F46E5'],
                 ],
-                'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
             ],
         ];
     }

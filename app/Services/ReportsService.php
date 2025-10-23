@@ -119,7 +119,7 @@ class ReportsService extends BaseService
             $firstHistory = $group->first();
             return [
                 'client_id' => $firstHistory->client_id,
-                'client_name' => $firstHistory->client->client_name ?? 'Unknown',
+                'client_name' => $firstHistory->client->client_name ?? 'Client ID: ' . $firstHistory->client_id,
                 'client_type' => $firstHistory->client_type,
                 'transaction_count' => $group->count(),
                 'total_revenue' => $group->sum('price'),
@@ -271,7 +271,7 @@ class ReportsService extends BaseService
             $firstHistory = $group->first();
             return [
                 'client_id' => $firstHistory->client_id,
-                'client_name' => $firstHistory->client->client_name ?? 'Unknown',
+                'client_name' => $firstHistory->client->client_name ?? 'Client ID: ' . $firstHistory->client_id,
                 'client_type' => $firstHistory->client_type,
                 'transaction_count' => $group->count(),
                 'total_revenue' => $group->sum('price'),

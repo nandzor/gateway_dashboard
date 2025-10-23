@@ -17,7 +17,6 @@ use App\Http\Controllers\CctvLayoutController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\CctvLiveStreamController;
 use App\Http\Controllers\EventLogController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ApiCredentialController;
@@ -62,8 +61,6 @@ Route::middleware('auth')->group(function () {
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/dashboard', [ReportController::class, 'dashboard'])->name('dashboard');
-        Route::get('/dashboard/export', [ReportController::class, 'exportDashboard'])->name('dashboard.export');
         Route::get('/daily', [ReportsController::class, 'daily'])->name('daily');
         Route::get('/daily/export', [ReportsController::class, 'exportDaily'])->name('daily.export');
         Route::get('/monthly', [ReportsController::class, 'monthly'])->name('monthly');

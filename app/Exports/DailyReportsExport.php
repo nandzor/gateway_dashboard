@@ -14,10 +14,10 @@ class DailyReportsExport implements FromCollection, WithHeadings, WithMapping, W
     protected $data;
     protected $date;
 
-    public function __construct($data, $date)
+    public function __construct($data)
     {
         $this->data = $data;
-        $this->date = $date;
+        $this->date = $data['date'] ?? now()->toDateString();
     }
 
     public function collection()
@@ -62,73 +62,87 @@ class DailyReportsExport implements FromCollection, WithHeadings, WithMapping, W
         ]);
 
         // Add transaction types
-        foreach ($this->data['transaction_types'] as $type => $details) {
-            $collection->push((object) [
-                'type' => 'Transaction Type',
-                'metric' => $type,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
-            ]);
+        if (isset($this->data['transaction_types']) && $this->data['transaction_types']->count() > 0) {
+            foreach ($this->data['transaction_types'] as $type => $details) {
+                $collection->push((object) [
+                    'type' => 'Transaction Type',
+                    'metric' => $type,
+                    'value' => $details['count'],
+                    'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
+                ]);
+            }
         }
 
         // Add client types
-        foreach ($this->data['client_types'] as $type => $details) {
-            $collection->push((object) [
-                'type' => 'Client Type',
-                'metric' => $type,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
-            ]);
+        if (isset($this->data['client_types']) && $this->data['client_types']->count() > 0) {
+            foreach ($this->data['client_types'] as $type => $details) {
+                $collection->push((object) [
+                    'type' => 'Client Type',
+                    'metric' => $type,
+                    'value' => $details['count'],
+                    'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
+                ]);
+            }
         }
 
         // Add top clients
-        foreach ($this->data['top_clients'] as $client) {
-            $collection->push((object) [
-                'type' => 'Top Client',
-                'metric' => $client['client_name'],
-                'value' => $client['transaction_count'],
-                'details' => "Revenue: {$client['total_revenue']}, Duration: {$client['total_duration']}"
-            ]);
+        if (isset($this->data['top_clients']) && $this->data['top_clients']->count() > 0) {
+            foreach ($this->data['top_clients'] as $client) {
+                $collection->push((object) [
+                    'type' => 'Top Client',
+                    'metric' => $client['client_name'],
+                    'value' => $client['transaction_count'],
+                    'details' => "Revenue: {$client['total_revenue']}, Duration: {$client['total_duration']}"
+                ]);
+            }
         }
 
         // Add top services
-        foreach ($this->data['top_services'] as $service) {
-            $collection->push((object) [
-                'type' => 'Top Service',
-                'metric' => $service['service_name'],
-                'value' => $service['usage_count'],
-                'details' => "Revenue: {$service['total_revenue']}, Duration: {$service['total_duration']}"
-            ]);
+        if (isset($this->data['top_services']) && $this->data['top_services']->count() > 0) {
+            foreach ($this->data['top_services'] as $service) {
+                $collection->push((object) [
+                    'type' => 'Top Service',
+                    'metric' => $service['service_name'],
+                    'value' => $service['usage_count'],
+                    'details' => "Revenue: {$service['total_revenue']}, Duration: {$service['total_duration']}"
+                ]);
+            }
         }
 
         // Add hourly trends
-        foreach ($this->data['hourly_trends'] as $hour => $details) {
-            $collection->push((object) [
-                'type' => 'Hourly Trend',
-                'metric' => $hour,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
-            ]);
+        if (isset($this->data['hourly_trends']) && $this->data['hourly_trends']->count() > 0) {
+            foreach ($this->data['hourly_trends'] as $hour => $details) {
+                $collection->push((object) [
+                    'type' => 'Hourly Trend',
+                    'metric' => $hour,
+                    'value' => $details['count'],
+                    'details' => "Revenue: {$details['revenue']}, Duration: {$details['duration']}"
+                ]);
+            }
         }
 
         // Add status breakdown
-        foreach ($this->data['status_breakdown'] as $status => $details) {
-            $collection->push((object) [
-                'type' => 'Status',
-                'metric' => $status,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}"
-            ]);
+        if (isset($this->data['status_breakdown']) && $this->data['status_breakdown']->count() > 0) {
+            foreach ($this->data['status_breakdown'] as $status => $details) {
+                $collection->push((object) [
+                    'type' => 'Status',
+                    'metric' => $status,
+                    'value' => $details['count'],
+                    'details' => "Revenue: {$details['revenue']}"
+                ]);
+            }
         }
 
         // Add charge breakdown
-        foreach ($this->data['charge_breakdown'] as $charge => $details) {
-            $collection->push((object) [
-                'type' => 'Charge Type',
-                'metric' => $charge,
-                'value' => $details['count'],
-                'details' => "Revenue: {$details['revenue']}"
-            ]);
+        if (isset($this->data['charge_breakdown']) && $this->data['charge_breakdown']->count() > 0) {
+            foreach ($this->data['charge_breakdown'] as $charge => $details) {
+                $collection->push((object) [
+                    'type' => 'Charge Type',
+                    'metric' => $charge,
+                    'value' => $details['count'],
+                    'details' => "Revenue: {$details['revenue']}"
+                ]);
+            }
         }
 
         return $collection;
@@ -158,12 +172,11 @@ class DailyReportsExport implements FromCollection, WithHeadings, WithMapping, W
     {
         return [
             1 => [
-                'font' => ['bold' => true, 'size' => 12],
+                'font' => ['bold' => true, 'size' => 12, 'color' => ['rgb' => 'FFFFFF']],
                 'fill' => [
                     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
                     'startColor' => ['rgb' => '4F46E5'],
                 ],
-                'font' => ['color' => ['rgb' => 'FFFFFF'], 'bold' => true],
             ],
         ];
     }
