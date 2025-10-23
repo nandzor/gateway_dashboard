@@ -203,13 +203,18 @@ class AnalyticsService extends BaseService
         // Get revenue data
         $todayRevenue = $histories->where('status', 'success')
             ->where('is_charge', 1)
-            ->whereDate('trx_date', Carbon::today())
+            ->filter(function ($history) {
+                return $history->trx_date && Carbon::parse($history->trx_date)->isToday();
+            })
             ->sum('price');
 
         $thisMonthRevenue = $histories->where('status', 'success')
             ->where('is_charge', 1)
-            ->whereMonth('trx_date', Carbon::now()->month)
-            ->whereYear('trx_date', Carbon::now()->year)
+            ->filter(function ($history) {
+                return $history->trx_date &&
+                       Carbon::parse($history->trx_date)->month === Carbon::now()->month &&
+                       Carbon::parse($history->trx_date)->year === Carbon::now()->year;
+            })
             ->sum('price');
 
         // Get recent transactions

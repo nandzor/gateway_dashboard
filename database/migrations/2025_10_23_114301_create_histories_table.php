@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->integer('client_type')->default(1); // 1 = Prepaid, 2 = Postpaid
             $table->string('trx_id')->nullable();
-            $table->integer('trx_type')->default(1); // 1 = Credit, 2 = Debit, 3 = Refund, 4 = Adjustment
+            $table->integer('trx_type')->default(1); //
             $table->timestamp('trx_date')->nullable();
             $table->foreignId('module_id')->constrained('services')->onDelete('cascade');
             $table->decimal('price', 15, 3)->default(0);
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('is_charge')->default(0);
             $table->string('remote_ip')->nullable();
             $table->integer('is_local')->default(0);
-            $table->string('status')->default('pending'); // success, failed, pending, error
+            $table->string('status')->default('OK'); // OK, ERROR, PENDING, INVALID REQUEST
             $table->text('trx_req')->nullable(); // JSON request data
             $table->integer('node_id')->nullable();
             $table->integer('is_dashboard')->default(0);
