@@ -11,7 +11,7 @@ class CurrencyService extends BaseService
     public function __construct()
     {
         $this->model = new Currency();
-        $this->searchableFields = ['name', 'code', 'symbol'];
+        $this->searchableFields = ['name', 'symbol'];
         $this->orderByColumn = 'name';
         $this->orderByDirection = 'asc';
     }
@@ -96,7 +96,7 @@ class CurrencyService extends BaseService
      */
     public function getActiveCurrencies(): Collection
     {
-        return $this->model->select('id', 'name', 'code', 'symbol')
+        return $this->model->select('id', 'name', 'symbol')
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
@@ -108,25 +108,11 @@ class CurrencyService extends BaseService
     public function validateCurrencyData(array $data): array
     {
         // Ensure required fields are present
-        $requiredFields = ['name', 'code', 'symbol'];
+        $requiredFields = ['name', 'symbol'];
         foreach ($requiredFields as $field) {
             if (!isset($data[$field]) || empty($data[$field])) {
                 throw new \InvalidArgumentException("Field {$field} is required");
             }
-        }
-
-        // Validate code length (3 characters)
-        if (strlen($data['code']) !== 3) {
-            throw new \InvalidArgumentException("Currency code must be exactly 3 characters");
-        }
-
-        // Validate code uniqueness (excluding current record for updates)
-        $query = $this->model->where('code', $data['code']);
-        if (isset($data['id'])) {
-            $query->where('id', '!=', $data['id']);
-        }
-        if ($query->exists()) {
-            throw new \InvalidArgumentException("Currency code already exists");
         }
 
         return $data;

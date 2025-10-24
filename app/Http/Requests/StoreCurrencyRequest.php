@@ -23,7 +23,6 @@ class StoreCurrencyRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'code' => 'required|string|size:3|unique:currencies,code',
             'symbol' => 'required|string|max:10',
             'is_active' => 'required|integer|in:0,1',
         ];
@@ -38,7 +37,6 @@ class StoreCurrencyRequest extends FormRequest
     {
         return [
             'name' => 'currency name',
-            'code' => 'currency code',
             'symbol' => 'currency symbol',
             'is_active' => 'status',
         ];
@@ -54,9 +52,6 @@ class StoreCurrencyRequest extends FormRequest
         return [
             'name.required' => 'Currency name is required.',
             'name.max' => 'Currency name must not exceed 255 characters.',
-            'code.required' => 'Currency code is required.',
-            'code.size' => 'Currency code must be exactly 3 characters.',
-            'code.unique' => 'This currency code already exists.',
             'symbol.required' => 'Currency symbol is required.',
             'symbol.max' => 'Currency symbol must not exceed 10 characters.',
             'is_active.required' => 'Status is required.',

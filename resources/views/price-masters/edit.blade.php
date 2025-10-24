@@ -50,26 +50,13 @@
             <!-- Service Selection -->
             <div>
               <x-select
-                name="service_id"
+                name="module_id"
                 label="Service"
                 :options="$services->pluck('name', 'id')->toArray()"
-                :selected="old('service_id', $priceMaster->module_id)"
+                :selected="old('module_id', $priceMaster->module_id)"
                 placeholder="Select a service"
                 required
-                error="{{ $errors->first('service_id') }}"
-              />
-            </div>
-
-            <!-- Client Selection -->
-            <div>
-              <x-select
-                name="client_id"
-                label="Client"
-                :options="$clients->pluck('client_name', 'id')->toArray()"
-                :selected="old('client_id', $priceMaster->client_id ?? '')"
-                placeholder="Select a client"
-                required
-                error="{{ $errors->first('client_id') }}"
+                error="{{ $errors->first('module_id') }}"
               />
             </div>
 

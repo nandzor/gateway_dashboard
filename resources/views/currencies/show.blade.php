@@ -38,10 +38,6 @@
                 <dd class="mt-1 text-sm text-gray-900">{{ $currency->name }}</dd>
               </div>
 
-              <div>
-                <dt class="text-sm font-medium text-gray-500">Currency Code</dt>
-                <dd class="mt-1 text-sm font-medium text-gray-900">{{ $currency->code }}</dd>
-              </div>
 
               <div>
                 <dt class="text-sm font-medium text-gray-500">Currency Symbol</dt>

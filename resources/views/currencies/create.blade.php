@@ -59,20 +59,6 @@
               />
             </div>
 
-            <!-- Currency Code -->
-            <div>
-              <x-input
-                name="code"
-                label="Currency Code"
-                type="text"
-                :value="old('code')"
-                placeholder="e.g., IDR"
-                maxlength="3"
-                required
-                error="{{ $errors->first('code') }}"
-              />
-              <p class="mt-1 text-sm text-gray-500">3-letter currency code (e.g., IDR, USD, EUR)</p>
-            </div>
 
             <!-- Currency Symbol -->
             <div>
@@ -89,17 +75,14 @@
 
             <!-- Status -->
             <div>
-              <x-input
+              <x-select
                 name="is_active"
                 label="Status"
-                type="select"
-                :value="old('is_active', 1)"
+                :options="['1' => 'Active', '0' => 'Inactive']"
+                :selected="old('is_active', 1)"
                 required
                 error="{{ $errors->first('is_active') }}"
-              >
-                <option value="1">Active</option>
-                <option value="0">Inactive</option>
-              </x-input>
+              />
             </div>
           </div>
 

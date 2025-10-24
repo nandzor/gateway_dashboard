@@ -31,9 +31,19 @@
                         :options="collect($clients)->mapWithKeys(function($client) {
                             return [$client->id => $client->client_name . ' (' . ($client->type == 1 ? 'Prepaid' : 'Postpaid') . ')'];
                         })->toArray()"
+                        :selected="old('client_id', $selectedClientId)"
                         placeholder="Pilih Klien"
+                        :disabled="$isClientDisabled"
                         required
                     />
+                    @if($isClientDisabled)
+                        <p class="mt-1 text-sm text-red-600">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Klien yang dipilih tidak aktif atau tidak ditemukan.
+                        </p>
+                    @endif
                 </div>
 
                 <!-- Amount -->

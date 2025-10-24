@@ -30,6 +30,7 @@ class PriceMaster extends Model
         return $this->belongsTo(Service::class, 'module_id');
     }
 
+
     /**
      * Get the currency that owns the price master
      */

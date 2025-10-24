@@ -41,14 +41,14 @@
         <div class="border-t pt-6">
           <h3 class="text-lg font-medium text-gray-900 mb-4">API Credentials</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <x-input name="ak" label="Access Key (AK)" :value="$client->ak" placeholder="Enter access key" />
+            <x-copy-input name="ak" label="Access Key (AK)" :value="$client->ak" placeholder="Enter access key" readonly />
 
-            <x-input name="sk" label="Secret Key (SK)" :value="$client->sk" placeholder="Enter secret key" />
+            <x-copy-input name="sk" label="Secret Key (SK)" :value="$client->sk" placeholder="Enter secret key" readonly />
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            <x-input name="avkey_iv" label="AVKey IV" :value="$client->avkey_iv" placeholder="Enter avkey iv" />
+            <x-copy-input name="avkey_iv" label="AVKey IV" :value="$client->avkey_iv" placeholder="Enter avkey iv" readonly />
 
-            <x-input name="avkey_pass" label="AVKey Pass" :value="$client->avkey_pass" placeholder="Enter avkey pass" />
+            <x-copy-input name="avkey_pass" label="AVKey Pass" :value="$client->avkey_pass" placeholder="Enter avkey pass" readonly />
           </div>
         </div>
 
@@ -99,4 +99,7 @@
       </form>
     </x-card>
   </div>
+
+  <!-- Copy Script -->
+  <x-copy-script />
 @endsection

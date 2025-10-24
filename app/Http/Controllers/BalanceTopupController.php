@@ -59,10 +59,19 @@ class BalanceTopupController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $clients = Client::where('is_active', 1)->get();
-        return view('balance-topups.create', compact('clients'));
+        $selectedClientId = $request->get('client_id');
+        $isClientDisabled = false;
+
+        // Check if selected client is inactive/blocked
+        if ($selectedClientId) {
+            $selectedClient = Client::find($selectedClientId);
+            $isClientDisabled = !$selectedClient || !$selectedClient->isActive();
+        }
+
+        return view('balance-topups.create', compact('clients', 'selectedClientId', 'isClientDisabled'));
     }
 
     /**
@@ -77,6 +86,14 @@ class BalanceTopupController extends Controller
             'reference_number' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:1000',
         ]);
+
+        // Additional validation: check if client is active
+        if ($request->filled('client_id')) {
+            $client = Client::find($request->client_id);
+            if (!$client || !$client->isActive()) {
+                $validator->errors()->add('client_id', 'Klien yang dipilih tidak aktif atau tidak ditemukan.');
+            }
+        }
 
         if ($validator->fails()) {
             return redirect()->back()

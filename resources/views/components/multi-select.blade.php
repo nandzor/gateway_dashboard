@@ -69,12 +69,14 @@
              class="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl hidden max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             @foreach($options as $value => $label)
                 <div class="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-150 flex items-center justify-between border-b border-gray-100 last:border-b-0"
-                     onclick="toggleOption('{{ $id }}', '{{ $value }}', '{{ addslashes($label) }}')">
+                     onclick="toggleOption('{{ $id }}', '{{ $value }}', '{{ addslashes($label) }}')"
+                     data-value="{{ $value }}">
                     <span class="text-sm font-medium text-gray-900">{{ $label }}</span>
                     <div class="flex items-center">
                         <input type="checkbox"
                                class="w-4 h-4 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 transition-colors duration-150"
                                {{ in_array($value, $selected) ? 'checked' : '' }}
+                               data-value="{{ $value }}"
                                readonly>
                     </div>
                 </div>
@@ -204,9 +206,10 @@ function removeTag(selectId, value) {
     if (option) {
         option.selected = false;
 
-        // Update checkbox in dropdown
+        // Update checkbox in dropdown using data-value attribute
         const dropdown = document.getElementById(selectId + '-dropdown');
-        const checkbox = dropdown.querySelector(`input[type="checkbox"][value="${value}"]`);
+        const checkbox = dropdown.querySelector(`input[type="checkbox"][data-value="${value}"]`);
+        
         if (checkbox) {
             checkbox.checked = false;
         }
