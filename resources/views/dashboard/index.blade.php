@@ -57,8 +57,8 @@
             <span class="text-xl font-semibold text-green-500">{{ App\Helpers\NumberHelper::formatCurrency($avgTransactionValue) }}</span>
           </div>
           <div class="flex justify-between items-center">
-            <span class="text-gray-600">Total Transactions:</span>
-            <span class="text-xl font-semibold text-gray-700">{{ App\Helpers\NumberHelper::formatNumber($totalTransactions) }}</span>
+            <span class="text-gray-600">Total Transaction Success:</span>
+            <span class="text-xl font-semibold text-gray-700">{{ number_format($totalTransactionSuccess, 0, ',', '.') }}</span>
           </div>
         </div>
       </x-card>

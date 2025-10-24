@@ -1,0 +1,489 @@
+{
+	"info": {
+		"_postman_id": "gateway-dashboard-api",
+		"name": "Gateway Dashboard API",
+		"description": "API collection for Gateway Dashboard with balance management endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Balance Management",
+			"item": [
+				{
+					"name": "Check Balance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{api_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"client_id\": 52\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/balance/check",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"balance",
+								"check"
+							]
+						},
+						"description": "Check client balance information"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer tpnrAM9JA26xtqR31fipmpHR0MdjGbR6WAkIdH3AuhG8HBVI32HOsnqZqDxaai4D"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\": 52\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/balance/check",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"balance",
+										"check"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Client balance retrieved successfully\",\n    \"data\": {\n        \"client\": {\n            \"id\": 52,\n            \"name\": \"test1\",\n            \"type\": \"Prepaid\",\n            \"is_active\": true,\n            \"created_at\": \"2025-03-17T02:14:52.796644Z\"\n        },\n        \"balance\": {\n            \"current_balance\": 150000,\n            \"quota\": 10,\n            \"status\": \"positive\",\n            \"last_updated\": \"2025-10-24T06:02:44.000000Z\"\n        },\n        \"summary\": {\n            \"has_balance\": true,\n            \"is_zero\": false,\n            \"is_negative\": false,\n            \"can_transact\": true\n        }\n    },\n    \"meta\": {\n        \"timestamp\": \"2025-10-24T13:09:11+07:00\",\n        \"version\": \"1.0\",\n        \"request_id\": \"eb4682b4-c325-4627-bcb6-bba8fe154d4c\",\n        \"query_count\": 0,\n        \"memory_usage\": \"1.37 MB\",\n        \"execution_time\": \"31.14ms\"\n    }\n}"
+						},
+						{
+							"name": "Error Response - Invalid Client",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer tpnrAM9JA26xtqR31fipmpHR0MdjGbR6WAkIdH3AuhG8HBVI32HOsnqZqDxaai4D"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\": 99999\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/balance/check",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"balance",
+										"check"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Client not found\",\n    \"data\": null,\n    \"meta\": {\n        \"timestamp\": \"2025-10-24T13:15:30+07:00\",\n        \"version\": \"1.0\",\n        \"request_id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Balance History",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{api_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"client_id\": 52,\n    \"limit\": 10,\n    \"offset\": 0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/balance/history",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"balance",
+								"history"
+							]
+						},
+						"description": "Get client balance transaction history"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer tpnrAM9JA26xtqR31fipmpHR0MdjGbR6WAkIdH3AuhG8HBVI32HOsnqZqDxaai4D"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\": 52,\n    \"limit\": 10,\n    \"offset\": 0\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/balance/history",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"balance",
+										"history"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Balance history retrieved successfully\",\n    \"data\": {\n        \"client\": {\n            \"id\": 52,\n            \"name\": \"test1\"\n        },\n        \"history\": [\n            {\n                \"transaction_id\": \"TXN001\",\n                \"amount\": 5000,\n                \"type\": \"debit\",\n                \"service\": \"OCR\",\n                \"date\": \"2025-10-24T10:30:00.000000Z\",\n                \"status\": \"OK\"\n            },\n            {\n                \"transaction_id\": \"TXN002\",\n                \"amount\": 10000,\n                \"type\": \"credit\",\n                \"service\": \"SMS\",\n                \"date\": \"2025-10-23T15:45:00.000000Z\",\n                \"status\": \"OK\"\n            }\n        ],\n        \"pagination\": {\n            \"limit\": 10,\n            \"offset\": 0,\n            \"count\": 2\n        }\n    },\n    \"meta\": {\n        \"timestamp\": \"2025-10-24T13:20:15+07:00\",\n        \"version\": \"1.0\",\n        \"request_id\": \"f1e2d3c4-b5a6-9870-fedc-ba0987654321\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Balance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{api_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"client_id\": 52,\n    \"amount\": 25000,\n    \"type\": \"credit\",\n    \"note\": \"Top up balance\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/balance/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"balance",
+								"update"
+							]
+						},
+						"description": "Update client balance (add or deduct)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer tpnrAM9JA26xtqR31fipmpHR0MdjGbR6WAkIdH3AuhG8HBVI32HOsnqZqDxaai4D"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\": 52,\n    \"amount\": 25000,\n    \"type\": \"credit\",\n    \"note\": \"Top up balance\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/balance/update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"balance",
+										"update"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Balance updated successfully\",\n    \"data\": {\n        \"client\": {\n            \"id\": 52,\n            \"name\": \"test1\"\n        },\n        \"balance\": {\n            \"previous_balance\": 150000,\n            \"new_balance\": 175000,\n            \"amount_changed\": 25000,\n            \"type\": \"credit\"\n        },\n        \"transaction\": {\n            \"id\": \"TXN003\",\n            \"note\": \"Top up balance\",\n            \"created_at\": \"2025-10-24T13:25:00.000000Z\"\n        }\n    },\n    \"meta\": {\n        \"timestamp\": \"2025-10-24T13:25:00+07:00\",\n        \"version\": \"1.0\",\n        \"request_id\": \"c3d4e5f6-a7b8-9012-cdef-123456789abc\"\n    }\n}"
+						},
+						{
+							"name": "Error Response - Validation Error",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer tpnrAM9JA26xtqR31fipmpHR0MdjGbR6WAkIdH3AuhG8HBVI32HOsnqZqDxaai4D"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"client_id\": \"invalid\",\n    \"amount\": -1000,\n    \"type\": \"invalid_type\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:8000/api/balance/update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"balance",
+										"update"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Validation failed\",\n    \"data\": {\n        \"errors\": {\n            \"client_id\": [\"The client id must be an integer.\"],\n            \"amount\": [\"The amount must be at least 0.\"],\n            \"type\": [\"The selected type is invalid.\"]\n        }\n    },\n    \"meta\": {\n        \"timestamp\": \"2025-10-24T13:26:00+07:00\",\n        \"version\": \"1.0\",\n        \"request_id\": \"d4e5f6a7-b8c9-0123-defa-234567890bcd\"\n    }\n}"
+						}
+					]
+				}
+			],
+			"description": "Balance management endpoints for checking, viewing history, and updating client balances"
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Test Authentication",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{api_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/test-auth",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"test-auth"
+							]
+						},
+						"description": "Test if API token is valid"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer tpnrAM9JA26xtqR31fipmpHR0MdjGbR6WAkIdH3AuhG8HBVI32HOsnqZqDxaai4D"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8000/api/test-auth",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"test-auth"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": true,\n    \"message\": \"Authentication successful\",\n    \"data\": {\n        \"authenticated\": true,\n        \"timestamp\": \"2025-10-24T13:30:00+07:00\"\n    },\n    \"meta\": {\n        \"timestamp\": \"2025-10-24T13:30:00+07:00\",\n        \"version\": \"1.0\",\n        \"request_id\": \"e5f6a7b8-c9d0-1234-efab-345678901cde\"\n    }\n}"
+						},
+						{
+							"name": "Error Response - Invalid Token",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer invalid_token"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8000/api/test-auth",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"api",
+										"test-auth"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"success\": false,\n    \"message\": \"Invalid API token\",\n    \"data\": null,\n    \"meta\": {\n        \"timestamp\": \"2025-10-24T13:31:00+07:00\",\n        \"version\": \"1.0\",\n        \"request_id\": \"f6a7b8c9-d0e1-2345-fabc-456789012def\"\n    }\n}"
+						}
+					]
+				}
+			],
+			"description": "Authentication testing endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-generate request ID for tracking",
+					"pm.globals.set('request_id', pm.variables.replaceIn('{{$randomUUID}}'));"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Basic response validation",
+					"pm.test('Response status code is successful', function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+					"});",
+					"",
+					"pm.test('Response has success field', function () {",
+					"    const jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property('success');",
+					"});",
+					"",
+					"pm.test('Response has meta field', function () {",
+					"    const jsonData = pm.response.json();",
+					"    pm.expect(jsonData).to.have.property('meta');",
+					"});",
+					"",
+					"pm.test('Response time is less than 5000ms', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "{{base_url}}",
+			"type": "string"
+		},
+		{
+			"key": "api_token",
+			"value": "{{api_token}}",
+			"type": "string"
+		}
+	]
+}

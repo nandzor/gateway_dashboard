@@ -228,16 +228,20 @@ class DashboardController extends Controller
      */
     private function getEnhancedDashboardData(): array
     {
-        // Calculate revenue statistics
-        $totalRevenue = Balance::sum('balance') ?? 0;
-        $totalTransactions = Balance::count();
-        $avgTransactionValue = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;
+        // Calculate revenue statistics from successful charged transactions only
+        $totalRevenue = History::where('is_charge', 1)->where('status', 'OK')->sum('price') ?? 0;
+        $totalTransactionSuccess = History::where('is_charge', 1)->where('status', 'OK')->count();
+        $avgTransactionValue = $totalTransactionSuccess > 0 ? $totalRevenue / $totalTransactionSuccess : 0;
+
+        // Total all transactions for stat card
+        $totalTransactions = History::count();
 
         // Get 7-day histories data for charts
         $historiesData = $this->getHistoriesChartData();
 
         return [
             'totalRevenue' => $totalRevenue,
+            'totalTransactionSuccess' => $totalTransactionSuccess,
             'totalTransactions' => $totalTransactions,
             'avgTransactionValue' => $avgTransactionValue,
             'historiesChartData' => $historiesData,
@@ -260,9 +264,10 @@ class DashboardController extends Controller
             ->get()
             ->keyBy('date');
 
-        // Get daily revenue
+        // Get daily revenue (charged transactions only)
         $dailyRevenue = History::selectRaw('DATE(trx_date) as date, SUM(price) as revenue')
             ->whereBetween('trx_date', [$startDate, $endDate])
+            ->where('is_charge', 1)
             ->groupBy('date')
             ->orderBy('date')
             ->get()

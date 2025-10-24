@@ -119,8 +119,8 @@ class ReportsController extends Controller
             'status_breakdown' => $reportData['statusBreakdown'],
             'charge_breakdown' => $reportData['chargeBreakdown'],
             'month' => $reportData['month'],
-            'client_id' => $reportData['clientId'],
-            'service_id' => $reportData['serviceId'],
+            'clientId' => $reportData['clientId'],
+            'serviceId' => $reportData['serviceId'],
         ];
 
         $fileName = $this->exportService->generateFileName('Monthly_Report_' . $reportData['month']);
